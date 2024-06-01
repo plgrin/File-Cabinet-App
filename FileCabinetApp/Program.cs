@@ -29,37 +29,6 @@
             new string[] { "list", "lists all records", "The 'list' command lists all records." },
         };
 
-        private static void Stat(string parameters)
-        {
-            var recordsCount = Program.fileCabinetService.GetStat();
-            Console.WriteLine($"{recordsCount} record(s).");
-        }
-
-        private static void Create(string parameters)
-        {
-            Console.Write("First name: ");
-            string firstName = Console.ReadLine();
-
-            Console.Write("Last name: ");
-            string lastName = Console.ReadLine();
-
-            Console.Write("Date of birth (mm/dd/yyyy): ");
-            string dobInput = Console.ReadLine();
-            DateTime dateOfBirth = DateTime.Parse(dobInput);
-
-            int recordId = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth);
-            Console.WriteLine($"Record #{recordId} is created.");
-        }
-
-        private static void List(string parameters)
-        {
-            var records = fileCabinetService.GetRecords();
-            foreach (var record in records)
-            {
-                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}");
-            }
-        }
-
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
@@ -80,7 +49,7 @@
                     continue;
                 }
 
-                var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.InvariantCultureIgnoreCase));
+                var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
                     const int parametersIndex = 1;
@@ -95,6 +64,46 @@
             while (isRunning);
         }
 
+        private static void Stat(string parameters)
+        {
+            var recordsCount = Program.fileCabinetService.GetStat();
+            Console.WriteLine($"{recordsCount} record(s).");
+        }
+
+        private static void Create(string parameters)
+        {
+            Console.Write("First name: ");
+            string firstName = Console.ReadLine();
+
+            Console.Write("Last name: ");
+            string lastName = Console.ReadLine();
+
+            Console.Write("Date of birth (mm/dd/yyyy): ");
+            string dobInput = Console.ReadLine();
+            DateTime dateOfBirth = DateTime.Parse(dobInput);
+
+            Console.Write("Age: ");
+            short age = short.Parse(Console.ReadLine());
+
+            Console.Write("Salary: ");
+            decimal salary = decimal.Parse(Console.ReadLine());
+
+            Console.Write("Gender (M/F): ");
+            char gender = char.Parse(Console.ReadLine());
+
+            int recordId = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, salary, gender);
+            Console.WriteLine($"Record #{recordId} is created.");
+        }
+
+        private static void List(string parameters)
+        {
+            var records = fileCabinetService.GetRecords();
+            foreach (var record in records)
+            {
+                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
+            }
+        }
+
         private static void PrintMissedCommandInfo(string command)
         {
             Console.WriteLine($"There is no '{command}' command.");
@@ -105,7 +114,7 @@
         {
             if (!string.IsNullOrEmpty(parameters))
             {
-                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.InvariantCultureIgnoreCase));
+                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
                     Console.WriteLine(helpMessages[index][Program.ExplanationHelpIndex]);
