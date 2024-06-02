@@ -252,10 +252,19 @@
                     Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
                 }
             }
+            else if (property.Equals("dateofbirth", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var records = fileCabinetService.FindByDateOfBirth(value);
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
+                }
+            }
             else
             {
                 Console.WriteLine($"Search by {property} is not supported.");
             }
         }
+
     }
 }

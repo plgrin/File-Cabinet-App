@@ -127,5 +127,13 @@ namespace FileCabinetApp
                 .Where(record => record.LastName.Equals(lastName, StringComparison.InvariantCultureIgnoreCase))
                 .ToArray();
         }
+
+        public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirth)
+        {
+            DateTime dob = DateTime.Parse(dateOfBirth);
+            return this.list
+                .Where(record => record.DateOfBirth == dob)
+                .ToArray();
+        }
     }
 }
