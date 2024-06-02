@@ -18,6 +18,7 @@
             new Tuple<string, Action<string>>("stat", Stat),
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
+            new Tuple<string, Action<string>>("edit", Edit),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -27,6 +28,7 @@
             new string[] { "stat", "prints the record statistics", "The 'stat' command prints the record statistics." },
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "lists all records", "The 'list' command lists all records." },
+            new string[] { "edit", "edits an existing record", "The 'edit' command edits an existing record." },
         };
 
         public static void Main(string[] args)
@@ -64,6 +66,64 @@
             while (isRunning);
         }
 
+        private static void Edit(string parameters)
+        {
+            if (int.TryParse(parameters, out int id))
+            {
+                try
+                {
+                    string firstName;
+                    do
+                    {
+                        Console.Write("First name: ");
+                        firstName = Console.ReadLine();
+                    } while (string.IsNullOrWhiteSpace(firstName) || firstName.Length < 2 || firstName.Length > 60);
+
+                    string lastName;
+                    do
+                    {
+                        Console.Write("Last name: ");
+                        lastName = Console.ReadLine();
+                    } while (string.IsNullOrWhiteSpace(lastName) || lastName.Length < 2 || lastName.Length > 60);
+
+                    DateTime dateOfBirth;
+                    do
+                    {
+                        Console.Write("Date of birth (mm/dd/yyyy): ");
+                    } while (!DateTime.TryParse(Console.ReadLine(), out dateOfBirth) || dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now);
+
+                    short age;
+                    do
+                    {
+                        Console.Write("Age: ");
+                    } while (!short.TryParse(Console.ReadLine(), out age) || age < 0 || age > 120);
+
+                    decimal salary;
+                    do
+                    {
+                        Console.Write("Salary: ");
+                    } while (!decimal.TryParse(Console.ReadLine(), out salary) || salary < 0);
+
+                    char gender;
+                    do
+                    {
+                        Console.Write("Gender (M/F): ");
+                    } while (!char.TryParse(Console.ReadLine(), out gender) || !"MF".Contains(gender));
+
+                    fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, age, salary, gender);
+                    Console.WriteLine($"Record #{id} is updated.");
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid record id.");
+            }
+        }
+
         private static void Stat(string parameters)
         {
             var recordsCount = Program.fileCabinetService.GetStat();
@@ -72,28 +132,48 @@
 
         private static void Create(string parameters)
         {
-            Console.Write("First name: ");
-            string firstName = Console.ReadLine();
+            string firstName;
+            do
+            {
+                Console.Write("First name: ");
+                firstName = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(firstName) || firstName.Length < 2 || firstName.Length > 60);
 
-            Console.Write("Last name: ");
-            string lastName = Console.ReadLine();
+            string lastName;
+            do
+            {
+                Console.Write("Last name: ");
+                lastName = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(lastName) || lastName.Length < 2 || lastName.Length > 60);
 
-            Console.Write("Date of birth (mm/dd/yyyy): ");
-            string dobInput = Console.ReadLine();
-            DateTime dateOfBirth = DateTime.Parse(dobInput);
+            DateTime dateOfBirth;
+            do
+            {
+                Console.Write("Date of birth (mm/dd/yyyy): ");
+            } while (!DateTime.TryParse(Console.ReadLine(), out dateOfBirth) || dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now);
 
-            Console.Write("Age: ");
-            short age = short.Parse(Console.ReadLine());
+            short age;
+            do
+            {
+                Console.Write("Age: ");
+            } while (!short.TryParse(Console.ReadLine(), out age) || age < 0 || age > 120);
 
-            Console.Write("Salary: ");
-            decimal salary = decimal.Parse(Console.ReadLine());
+            decimal salary;
+            do
+            {
+                Console.Write("Salary: ");
+            } while (!decimal.TryParse(Console.ReadLine(), out salary) || salary < 0);
 
-            Console.Write("Gender (M/F): ");
-            char gender = char.Parse(Console.ReadLine());
+            char gender;
+            do
+            {
+                Console.Write("Gender (M/F): ");
+            } while (!char.TryParse(Console.ReadLine(), out gender) || !"MF".Contains(gender));
 
             int recordId = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, salary, gender);
             Console.WriteLine($"Record #{recordId} is created.");
         }
+
 
         private static void List(string parameters)
         {
