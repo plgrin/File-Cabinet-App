@@ -7,7 +7,7 @@
     {
         private const string DeveloperName = "Grin Polina";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
-        private static FileCabinetService fileCabinetService = new FileCabinetService();
+        private static FileCabinetService? fileCabinetService;
 
         private static bool isRunning = true;
 
@@ -39,6 +39,30 @@
         /// <param name="args">Command-line arguments.</param>
         public static void Main(string[] args)
         {
+            string validationRules = "default";
+            foreach (string arg in args)
+            {
+                if (arg.StartsWith("--validation-rules=", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    validationRules = arg.Substring("--validation-rules=".Length);
+                }
+                else if (arg.StartsWith("-v ", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    validationRules = arg.Substring("-v ".Length);
+                }
+            }
+
+            if (validationRules.Equals("custom", StringComparison.OrdinalIgnoreCase))
+            {
+                fileCabinetService = new FileCabinetCustomService();
+                Console.WriteLine("Using custom validation rules.");
+            }
+            else
+            {
+                fileCabinetService = new FileCabinetDefaultService();
+                Console.WriteLine("Using default validation rules.");
+            }
+
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
             Console.WriteLine(HintMessage);
             Console.WriteLine();
@@ -136,12 +160,6 @@
             }
         }
 
-        private static void Stat(string parameters)
-        {
-            var recordsCount = Program.fileCabinetService.GetStat();
-            Console.WriteLine($"{recordsCount} record(s).");
-        }
-
         private static void Create(string parameters)
         {
             string firstName;
@@ -192,54 +210,6 @@
             Console.WriteLine($"Record #{recordId} is created.");
         }
 
-        private static void List(string parameters)
-        {
-            var records = fileCabinetService.GetRecords();
-            foreach (var record in records)
-            {
-                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
-            }
-        }
-
-        private static void PrintMissedCommandInfo(string command)
-        {
-            Console.WriteLine($"There is no '{command}' command.");
-            Console.WriteLine();
-        }
-
-        private static void PrintHelp(string parameters)
-        {
-            if (!string.IsNullOrEmpty(parameters))
-            {
-                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[0], parameters, StringComparison.OrdinalIgnoreCase));
-                if (index >= 0)
-                {
-                    Console.WriteLine(helpMessages[index][2]);
-                }
-                else
-                {
-                    Console.WriteLine($"There is no explanation for '{parameters}' command.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Available commands:");
-
-                foreach (var helpMessage in helpMessages)
-                {
-                    Console.WriteLine("\t{0}\t- {1}", helpMessage[0], helpMessage[1]);
-                }
-            }
-
-            Console.WriteLine();
-        }
-
-        private static void Exit(string parameters)
-        {
-            Console.WriteLine("Exiting an application...");
-            isRunning = false;
-        }
-
         private static void Find(string parameters)
         {
             var inputs = parameters.Split(' ', 2);
@@ -280,6 +250,60 @@
             {
                 Console.WriteLine($"Search by {property} is not supported.");
             }
+        }
+
+        private static void PrintHelp(string parameters)
+        {
+            if (!string.IsNullOrEmpty(parameters))
+            {
+                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[0], parameters, StringComparison.OrdinalIgnoreCase));
+                if (index >= 0)
+                {
+                    Console.WriteLine(helpMessages[index][2]);
+                }
+                else
+                {
+                    Console.WriteLine($"There is no explanation for '{parameters}' command.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Available commands:");
+
+                foreach (var helpMessage in helpMessages)
+                {
+                    Console.WriteLine("\t{0}\t- {1}", helpMessage[0], helpMessage[1]);
+                }
+            }
+
+            Console.WriteLine();
+        }
+
+        private static void Stat(string parameters)
+        {
+            var recordsCount = Program.fileCabinetService.GetStat();
+            Console.WriteLine($"{recordsCount} record(s).");
+        }
+
+        private static void List(string parameters)
+        {
+            var records = fileCabinetService.GetRecords();
+            foreach (var record in records)
+            {
+                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
+            }
+        }
+
+        private static void PrintMissedCommandInfo(string command)
+        {
+            Console.WriteLine($"There is no '{command}' command.");
+            Console.WriteLine();
+        }
+
+        private static void Exit(string parameters)
+        {
+            Console.WriteLine("Exiting an application...");
+            isRunning = false;
         }
     }
 }
