@@ -113,5 +113,12 @@ namespace FileCabinetApp
             record.Salary = salary;
             record.Gender = gender;
         }
+
+        public FileCabinetRecord[] FindByFirstName(string firstName)
+        {
+            return this.list
+                .Where(record => record.FirstName.Equals(firstName, StringComparison.InvariantCultureIgnoreCase))
+                .ToArray();
+        }
     }
 }
