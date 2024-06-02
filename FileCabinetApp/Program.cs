@@ -72,28 +72,48 @@
 
         private static void Create(string parameters)
         {
-            Console.Write("First name: ");
-            string firstName = Console.ReadLine();
+            string firstName;
+            do
+            {
+                Console.Write("First name: ");
+                firstName = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(firstName) || firstName.Length < 2 || firstName.Length > 60);
 
-            Console.Write("Last name: ");
-            string lastName = Console.ReadLine();
+            string lastName;
+            do
+            {
+                Console.Write("Last name: ");
+                lastName = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(lastName) || lastName.Length < 2 || lastName.Length > 60);
 
-            Console.Write("Date of birth (mm/dd/yyyy): ");
-            string dobInput = Console.ReadLine();
-            DateTime dateOfBirth = DateTime.Parse(dobInput);
+            DateTime dateOfBirth;
+            do
+            {
+                Console.Write("Date of birth (mm/dd/yyyy): ");
+            } while (!DateTime.TryParse(Console.ReadLine(), out dateOfBirth) || dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now);
 
-            Console.Write("Age: ");
-            short age = short.Parse(Console.ReadLine());
+            short age;
+            do
+            {
+                Console.Write("Age: ");
+            } while (!short.TryParse(Console.ReadLine(), out age) || age < 0 || age > 120);
 
-            Console.Write("Salary: ");
-            decimal salary = decimal.Parse(Console.ReadLine());
+            decimal salary;
+            do
+            {
+                Console.Write("Salary: ");
+            } while (!decimal.TryParse(Console.ReadLine(), out salary) || salary < 0);
 
-            Console.Write("Gender (M/F): ");
-            char gender = char.Parse(Console.ReadLine());
+            char gender;
+            do
+            {
+                Console.Write("Gender (M/F): ");
+            } while (!char.TryParse(Console.ReadLine(), out gender) || !"MF".Contains(gender));
 
             int recordId = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, salary, gender);
             Console.WriteLine($"Record #{recordId} is created.");
         }
+
 
         private static void List(string parameters)
         {
