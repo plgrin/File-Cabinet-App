@@ -4,14 +4,11 @@
     {
         private const string DeveloperName = "Grin Polina";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
-        private const int CommandHelpIndex = 0;
-        private const int DescriptionHelpIndex = 1;
-        private const int ExplanationHelpIndex = 2;
         private static FileCabinetService fileCabinetService = new FileCabinetService();
 
         private static bool isRunning = true;
 
-        private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
+        private static Tuple<string, Action<string>>[] сommands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("exit", Exit),
@@ -35,8 +32,8 @@
 
         public static void Main(string[] args)
         {
-            Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
-            Console.WriteLine(Program.HintMessage);
+            Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
+            Console.WriteLine(HintMessage);
             Console.WriteLine();
 
             do
@@ -49,16 +46,16 @@
 
                 if (string.IsNullOrEmpty(command))
                 {
-                    Console.WriteLine(Program.HintMessage);
+                    Console.WriteLine(HintMessage);
                     continue;
                 }
 
-                var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.OrdinalIgnoreCase));
+                var index = Array.FindIndex(сommands, 0, сommands.Length, i => i.Item1.Equals(command, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
                     const int parametersIndex = 1;
                     var parameters = inputs.Length > 1 ? inputs[parametersIndex] : string.Empty;
-                    commands[index].Item2(parameters);
+                    сommands[index].Item2(parameters);
                 }
                 else
                 {
@@ -79,38 +76,44 @@
                     {
                         Console.Write("First name: ");
                         firstName = Console.ReadLine();
-                    } while (string.IsNullOrWhiteSpace(firstName) || firstName.Length < 2 || firstName.Length > 60);
+                    }
+                    while (string.IsNullOrWhiteSpace(firstName) || firstName.Length < 2 || firstName.Length > 60);
 
                     string lastName;
                     do
                     {
                         Console.Write("Last name: ");
                         lastName = Console.ReadLine();
-                    } while (string.IsNullOrWhiteSpace(lastName) || lastName.Length < 2 || lastName.Length > 60);
+                    }
+                    while (string.IsNullOrWhiteSpace(lastName) || lastName.Length < 2 || lastName.Length > 60);
 
                     DateTime dateOfBirth;
                     do
                     {
-                        Console.Write("Date of birth (mm/dd/yyyy): ");
-                    } while (!DateTime.TryParse(Console.ReadLine(), out dateOfBirth) || dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now);
+                        Console.Write("Date of birth (dd/mm/yyyy): ");
+                    }
+                    while (!DateTime.TryParse(Console.ReadLine(), out dateOfBirth) || dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now);
 
                     short age;
                     do
                     {
                         Console.Write("Age: ");
-                    } while (!short.TryParse(Console.ReadLine(), out age) || age < 0 || age > 120);
+                    }
+                    while (!short.TryParse(Console.ReadLine(), out age) || age < 0 || age > 120);
 
                     decimal salary;
                     do
                     {
                         Console.Write("Salary: ");
-                    } while (!decimal.TryParse(Console.ReadLine(), out salary) || salary < 0);
+                    }
+                    while (!decimal.TryParse(Console.ReadLine(), out salary) || salary < 0);
 
                     char gender;
                     do
                     {
                         Console.Write("Gender (M/F): ");
-                    } while (!char.TryParse(Console.ReadLine(), out gender) || !"MF".Contains(gender));
+                    }
+                    while (!char.TryParse(Console.ReadLine(), out gender) || !"MF".Contains(gender));
 
                     fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, age, salary, gender);
                     Console.WriteLine($"Record #{id} is updated.");
@@ -139,38 +142,44 @@
             {
                 Console.Write("First name: ");
                 firstName = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(firstName) || firstName.Length < 2 || firstName.Length > 60);
+            }
+            while (string.IsNullOrWhiteSpace(firstName) || firstName.Length < 2 || firstName.Length > 60);
 
             string lastName;
             do
             {
                 Console.Write("Last name: ");
                 lastName = Console.ReadLine();
-            } while (string.IsNullOrWhiteSpace(lastName) || lastName.Length < 2 || lastName.Length > 60);
+            }
+            while (string.IsNullOrWhiteSpace(lastName) || lastName.Length < 2 || lastName.Length > 60);
 
             DateTime dateOfBirth;
             do
             {
-                Console.Write("Date of birth (mm/dd/yyyy): ");
-            } while (!DateTime.TryParse(Console.ReadLine(), out dateOfBirth) || dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now);
+                Console.Write("Date of birth (dd/mm/yyyy): ");
+            }
+            while (!DateTime.TryParse(Console.ReadLine(), out dateOfBirth) || dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now);
 
             short age;
             do
             {
                 Console.Write("Age: ");
-            } while (!short.TryParse(Console.ReadLine(), out age) || age < 0 || age > 120);
+            }
+            while (!short.TryParse(Console.ReadLine(), out age) || age < 0 || age > 120);
 
             decimal salary;
             do
             {
                 Console.Write("Salary: ");
-            } while (!decimal.TryParse(Console.ReadLine(), out salary) || salary < 0);
+            }
+            while (!decimal.TryParse(Console.ReadLine(), out salary) || salary < 0);
 
             char gender;
             do
             {
                 Console.Write("Gender (M/F): ");
-            } while (!char.TryParse(Console.ReadLine(), out gender) || !"MF".Contains(gender));
+            }
+            while (!char.TryParse(Console.ReadLine(), out gender) || !"MF".Contains(gender));
 
             int recordId = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, salary, gender);
             Console.WriteLine($"Record #{recordId} is created.");
@@ -195,10 +204,10 @@
         {
             if (!string.IsNullOrEmpty(parameters))
             {
-                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.OrdinalIgnoreCase));
+                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[0], parameters, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
-                    Console.WriteLine(helpMessages[index][Program.ExplanationHelpIndex]);
+                    Console.WriteLine(helpMessages[index][2]);
                 }
                 else
                 {
@@ -211,7 +220,7 @@
 
                 foreach (var helpMessage in helpMessages)
                 {
-                    Console.WriteLine("\t{0}\t- {1}", helpMessage[Program.CommandHelpIndex], helpMessage[Program.DescriptionHelpIndex]);
+                    Console.WriteLine("\t{0}\t- {1}", helpMessage[0], helpMessage[1]);
                 }
             }
 
@@ -236,7 +245,7 @@
             var property = inputs[0];
             var value = inputs[1].Trim('\"');
 
-            if (property.Equals("firstname", StringComparison.InvariantCultureIgnoreCase))
+            if (property.Equals("firstname", StringComparison.OrdinalIgnoreCase))
             {
                 var records = fileCabinetService.FindByFirstName(value);
                 foreach (var record in records)
@@ -244,7 +253,7 @@
                     Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
                 }
             }
-            else if (property.Equals("lastname", StringComparison.InvariantCultureIgnoreCase))
+            else if (property.Equals("lastname", StringComparison.OrdinalIgnoreCase))
             {
                 var records = fileCabinetService.FindByLastName(value);
                 foreach (var record in records)
@@ -252,7 +261,7 @@
                     Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
                 }
             }
-            else if (property.Equals("dateofbirth", StringComparison.InvariantCultureIgnoreCase))
+            else if (property.Equals("dateofbirth", StringComparison.OrdinalIgnoreCase))
             {
                 var records = fileCabinetService.FindByDateOfBirth(value);
                 foreach (var record in records)
@@ -265,6 +274,5 @@
                 Console.WriteLine($"Search by {property} is not supported.");
             }
         }
-
     }
 }
