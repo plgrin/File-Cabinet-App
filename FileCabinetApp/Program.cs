@@ -1,5 +1,8 @@
 ﻿namespace FileCabinetApp
 {
+    /// <summary>
+    /// Main class for the File Cabinet Application.
+    /// </summary>
     public static class Program
     {
         private const string DeveloperName = "Grin Polina";
@@ -30,6 +33,10 @@
             new string[] { "find", "finds records by a property", "The 'find' command finds records by a property." },
         };
 
+        /// <summary>
+        /// Main method for the application.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");

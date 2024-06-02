@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// Provides methods to manage file cabinet records.
+    /// </summary>
     public class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
@@ -13,6 +16,17 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
 
+        /// <summary>
+        /// Creates a new record.
+        /// </summary>
+        /// <param name="firstName"> First name.</param>
+        /// <param name="lastName"> Last name.</param>
+        /// <param name="dateOfBirth"> Date of birth.</param>
+        /// <param name="age"> Age.</param>
+        /// <param name="salary">Salary.</param>
+        /// <param name="gender">Gender.</param>
+        /// <returns>The ID of the created record.</returns>
+        /// <exception cref="ArgumentException">Thrown when one of the parameters is invalid.</exception>
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender)
         {
             ValidateParameters(firstName, lastName, dateOfBirth, age, salary, gender);
@@ -34,6 +48,17 @@ namespace FileCabinetApp
             return record.Id;
         }
 
+        /// <summary>
+        /// Edits an existing record.
+        /// </summary>
+        /// <param name="id">Record ID.</param>
+        /// <param name="firstName"> First name.</param>
+        /// <param name="lastName"> Last name.</param>
+        /// <param name="dateOfBirth"> Date of birth.</param>
+        /// <param name="age"> Age.</param>
+        /// <param name="salary">Salary.</param>
+        /// <param name="gender">Gender.</param>
+        /// <exception cref="ArgumentException">Thrown when one of the parameters is invalid or the record does not exist.</exception>
         public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender)
         {
             var record = this.list.FirstOrDefault(r => r.Id == id);
@@ -57,6 +82,11 @@ namespace FileCabinetApp
             this.AddRecordToDictionaries(record);
         }
 
+        /// <summary>
+        /// Finds records by first name.
+        /// </summary>
+        /// <param name="firstName">First name to search for.</param>
+        /// <returns>An array of records with the specified first name.</returns>
         public FileCabinetRecord[] FindByFirstName(string firstName)
         {
             if (this.firstNameDictionary.ContainsKey(firstName))
@@ -67,6 +97,11 @@ namespace FileCabinetApp
             return Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Finds records by last name.
+        /// </summary>
+        /// <param name="lastName">Last name to search for.</param>
+        /// <returns>An array of records with the specified last name.</returns>
         public FileCabinetRecord[] FindByLastName(string lastName)
         {
             if (this.lastNameDictionary.ContainsKey(lastName))
@@ -77,6 +112,11 @@ namespace FileCabinetApp
             return Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Finds records by date of birth.
+        /// </summary>
+        /// <param name="dateOfBirth">Date of birth to search for.</param>
+        /// <returns>An array of records with the specified date of birth.</returns>
         public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirth)
         {
             DateTime dob = DateTime.Parse(dateOfBirth);
@@ -88,11 +128,19 @@ namespace FileCabinetApp
             return Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Gets all records.
+        /// </summary>
+        /// <returns>An array of all records.</returns>
         public FileCabinetRecord[] GetRecords()
         {
             return this.list.ToArray();
         }
 
+        /// <summary>
+        /// Gets the total number of records.
+        /// </summary>
+        /// <returns>The total number of records.</returns>
         public int GetStat()
         {
             return this.list.Count;
@@ -158,18 +206,21 @@ namespace FileCabinetApp
             {
                 this.firstNameDictionary[record.FirstName] = new List<FileCabinetRecord>();
             }
+
             this.firstNameDictionary[record.FirstName].Add(record);
 
             if (!this.lastNameDictionary.ContainsKey(record.LastName))
             {
                 this.lastNameDictionary[record.LastName] = new List<FileCabinetRecord>();
             }
+
             this.lastNameDictionary[record.LastName].Add(record);
 
             if (!this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth))
             {
                 this.dateOfBirthDictionary[record.DateOfBirth] = new List<FileCabinetRecord>();
             }
+
             this.dateOfBirthDictionary[record.DateOfBirth].Add(record);
         }
     }
