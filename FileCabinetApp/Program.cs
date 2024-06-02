@@ -19,6 +19,7 @@
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
+            new Tuple<string, Action<string>>("find", Find),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -29,6 +30,7 @@
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "lists all records", "The 'list' command lists all records." },
             new string[] { "edit", "edits an existing record", "The 'edit' command edits an existing record." },
+            new string[] { "find", "finds records by a property", "The 'find' command finds records by a property." },
         };
 
         public static void Main(string[] args)
@@ -174,7 +176,6 @@
             Console.WriteLine($"Record #{recordId} is created.");
         }
 
-
         private static void List(string parameters)
         {
             var records = fileCabinetService.GetRecords();
@@ -222,5 +223,48 @@
             Console.WriteLine("Exiting an application...");
             isRunning = false;
         }
+
+        private static void Find(string parameters)
+        {
+            var inputs = parameters.Split(' ', 2);
+            if (inputs.Length < 2)
+            {
+                Console.WriteLine("Invalid parameters. Usage: find <property> <value>");
+                return;
+            }
+
+            var property = inputs[0];
+            var value = inputs[1].Trim('\"');
+
+            if (property.Equals("firstname", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var records = fileCabinetService.FindByFirstName(value);
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
+                }
+            }
+            else if (property.Equals("lastname", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var records = fileCabinetService.FindByLastName(value);
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
+                }
+            }
+            else if (property.Equals("dateofbirth", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var records = fileCabinetService.FindByDateOfBirth(value);
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Search by {property} is not supported.");
+            }
+        }
+
     }
 }
