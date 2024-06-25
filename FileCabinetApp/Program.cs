@@ -7,7 +7,7 @@
     {
         private const string DeveloperName = "Grin Polina";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
-        private static FileCabinetService? fileCabinetService;
+        private static IFileCabinetService? fileCabinetService;
 
         private static bool isRunning = true;
 
