@@ -4,5 +4,290 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.Converters">
+            <summary>
+            Provides methods for converting strings to various data types.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Converters.StringConverter(System.String)">
+            <summary>
+            Converts a string to a string.
+            </summary>
+            <param name="input">The input string.</param>
+            <returns>A tuple containing a boolean indicating success, an error message if applicable, and the converted value.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Converters.DateConverter(System.String)">
+            <summary>
+            Converts a string to a DateTime.
+            </summary>
+            <param name="input">The input string.</param>
+            <returns>A tuple containing a boolean indicating success, an error message if applicable, and the converted value.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Converters.ShortConverter(System.String)">
+            <summary>
+            Converts a string to a short.
+            </summary>
+            <param name="input">The input string.</param>
+            <returns>A tuple containing a boolean indicating success, an error message if applicable, and the converted value.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Converters.DecimalConverter(System.String)">
+            <summary>
+            Converts a string to a decimal.
+            </summary>
+            <param name="input">The input string.</param>
+            <returns>A tuple containing a boolean indicating success, an error message if applicable, and the converted value.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Converters.CharConverter(System.String)">
+            <summary>
+            Converts a string to a char.
+            </summary>
+            <param name="input">The input string.</param>
+            <returns>A tuple containing a boolean indicating success, an error message if applicable, and the converted value.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetRecord">
+            <summary>
+            Represents a record in the File Cabinet.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Id">
+            <summary>
+            Gets or sets the ID.
+            </summary>
+            <value>
+            The ID.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.FirstName">
+            <summary>
+            Gets or sets the first name.
+            </summary>
+            <value>
+            The first name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.LastName">
+            <summary>
+            Gets or sets the last name.
+            </summary>
+            <value>
+            The last name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirth">
+            <summary>
+            Gets or sets the date of birth.
+            </summary>
+            <value>
+            The date of birth.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Age">
+            <summary>
+            Gets or sets age.
+            </summary>
+            <value>
+            Age.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Salary">
+            <summary>
+            Gets or sets salary.
+            </summary>
+            <value>
+            Salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Gender">
+            <summary>
+            Gets or sets gender.
+            </summary>
+            <value>
+            Gender.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService">
+            <summary>
+            Provides methods to manage file cabinet records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Creates a new record.
+            </summary>
+            <param name="firstName"> First name.</param>
+            <param name="lastName"> Last name.</param>
+            <param name="dateOfBirth"> Date of birth.</param>
+            <param name="age"> Age.</param>
+            <param name="salary">Salary.</param>
+            <param name="gender">Gender.</param>
+            <returns>The ID of the created record.</returns>
+            <exception cref="T:System.ArgumentException">Thrown when one of the parameters is invalid.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Edits an existing record.
+            </summary>
+            <param name="id">Record ID.</param>
+            <param name="firstName"> First name.</param>
+            <param name="lastName"> Last name.</param>
+            <param name="dateOfBirth"> Date of birth.</param>
+            <param name="age"> Age.</param>
+            <param name="salary">Salary.</param>
+            <param name="gender">Gender.</param>
+            <exception cref="T:System.ArgumentException">Thrown when one of the parameters is invalid or the record does not exist.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Finds records by first name.
+            </summary>
+            <param name="firstName">First name to search for.</param>
+            <returns>An array of records with the specified first name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Finds records by last name.
+            </summary>
+            <param name="lastName">Last name to search for.</param>
+            <returns>An array of records with the specified last name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.String)">
+            <summary>
+            Finds records by date of birth.
+            </summary>
+            <param name="dateOfBirth">Date of birth to search for.</param>
+            <returns>An array of records with the specified date of birth.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
+            <summary>
+            Gets all records.
+            </summary>
+            <returns>An array of all records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetStat">
+            <summary>
+            Gets the total number of records.
+            </summary>
+            <returns>The total number of records.</returns>
+        </member>
+        <member name="T:FileCabinetApp.IFileCabinetService">
+            <summary>
+            Provides methods for managing file cabinet records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Creates a new record in the file cabinet.
+            </summary>
+            <param name="firstName">The first name of the record.</param>
+            <param name="lastName">The last name of the record.</param>
+            <param name="dateOfBirth">The date of birth of the record.</param>
+            <param name="age">The age of the record.</param>
+            <param name="salary">The salary of the record.</param>
+            <param name="gender">The gender of the record.</param>
+            <returns>The ID of the created record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Edits an existing record in the file cabinet.
+            </summary>
+            <param name="id">The ID of the record to edit.</param>
+            <param name="firstName">The first name of the record.</param>
+            <param name="lastName">The last name of the record.</param>
+            <param name="dateOfBirth">The date of birth of the record.</param>
+            <param name="age">The age of the record.</param>
+            <param name="salary">The salary of the record.</param>
+            <param name="gender">The gender of the record.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetRecords">
+            <summary>
+            Gets all records from the file cabinet.
+            </summary>
+            <returns>A read-only collection of file cabinet records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetStat">
+            <summary>
+            Gets the number of records in the file cabinet.
+            </summary>
+            <returns>The number of records in the file cabinet.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Finds records by first name.
+            </summary>
+            <param name="firstName">The first name to search for.</param>
+            <returns>A read-only collection of records with the specified first name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Finds records by last name.
+            </summary>
+            <param name="lastName">The last name to search for.</param>
+            <returns>A read-only collection of records with the specified last name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByDateOfBirth(System.String)">
+            <summary>
+            Finds records by date of birth.
+            </summary>
+            <param name="dateOfBirth">The date of birth to search for.</param>
+            <returns>A read-only collection of records with the specified date of birth.</returns>
+        </member>
+        <member name="T:FileCabinetApp.Program">
+            <summary>
+            Main class for the File Cabinet Application.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Program.Main(System.String[])">
+            <summary>
+            Main method for the application.
+            </summary>
+            <param name="args">Command-line arguments.</param>
+        </member>
+        <member name="T:FileCabinetApp.Validators">
+            <summary>
+            Provides methods for validating various data types.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Validators.FirstNameValidator(System.String)">
+            <summary>
+            Validates a first name.
+            </summary>
+            <param name="firstName">The first name to validate.</param>
+            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Validators.LastNameValidator(System.String)">
+            <summary>
+            Validates a last name.
+            </summary>
+            <param name="lastName">The last name to validate.</param>
+            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Validators.DateOfBirthValidator(System.DateTime)">
+            <summary>
+            Validates a date of birth.
+            </summary>
+            <param name="dateOfBirth">The date of birth to validate.</param>
+            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Validators.AgeValidator(System.Int16)">
+            <summary>
+            Validates an age.
+            </summary>
+            <param name="age">The age to validate.</param>
+            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Validators.SalaryValidator(System.Decimal)">
+            <summary>
+            Validates a salary.
+            </summary>
+            <param name="salary">The salary to validate.</param>
+            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Validators.GenderValidator(System.Char)">
+            <summary>
+            Validates a gender.
+            </summary>
+            <param name="gender">The gender to validate.</param>
+            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
+        </member>
     </members>
 </doc>
