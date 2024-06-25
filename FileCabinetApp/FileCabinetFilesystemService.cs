@@ -13,7 +13,7 @@ namespace FileCabinetApp
     public class FileCabinetFilesystemService : IFileCabinetService
     {
         private const int RecordSize = 278;
-        private readonly FileStream fileStream;
+        private FileStream fileStream;
         private readonly IRecordValidator validator;
 
         /// <summary>
@@ -219,9 +219,31 @@ namespace FileCabinetApp
         /// Gets the total number of records in the file system.
         /// </summary>
         /// <returns>The number of records.</returns>
-        public int GetStat()
+        public (int Total, int Deleted) GetStat()
         {
-            return (int)(this.fileStream.Length / RecordSize);
+            int totalCount = 0;
+            int deletedCount = 0;
+            this.fileStream.Seek(0, SeekOrigin.Begin);
+
+            using (BinaryReader reader = new BinaryReader(this.fileStream, Encoding.UTF8, true))
+            {
+                while (this.fileStream.Position < this.fileStream.Length)
+                {
+                    short status = reader.ReadInt16();
+                    if ((status & 0b0100) == 0)
+                    {
+                        totalCount++;
+                    }
+                    else
+                    {
+                        deletedCount++;
+                    }
+
+                    this.fileStream.Seek(RecordSize - sizeof(short), SeekOrigin.Current);
+                }
+            }
+
+            return (totalCount, deletedCount);
         }
 
         /// <summary>
@@ -392,6 +414,76 @@ namespace FileCabinetApp
         {
             var records = this.GetRecords();
             return new FileCabinetServiceSnapshot(new List<FileCabinetRecord>(records));
+        }
+
+        /// <summary>
+        /// Removes the record with the specified ID by marking it as deleted.
+        /// </summary>
+        /// <param name="id">The ID of the record to remove.</param>
+        /// <exception cref="ArgumentException">Thrown when the record with the specified ID doesn't exist.</exception>
+        public void RemoveRecord(int id)
+        {
+            this.fileStream.Seek(0, SeekOrigin.Begin);
+            using (BinaryReader reader = new BinaryReader(this.fileStream, Encoding.UTF8, true))
+            using (BinaryWriter writer = new BinaryWriter(this.fileStream, Encoding.UTF8, true))
+            {
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
+                {
+                    long position = reader.BaseStream.Position;
+                    short status = reader.ReadInt16();
+                    int recordId = reader.ReadInt32();
+
+                    if (recordId == id)
+                    {
+                        writer.Seek((int)position, SeekOrigin.Begin);
+                        writer.Write((short)(status | 0b_0100));
+                        return;
+                    }
+
+                    reader.BaseStream.Seek(RecordSize - sizeof(short) - sizeof(int), SeekOrigin.Current);
+                }
+            }
+            throw new ArgumentException($"Record #{id} doesn't exist.");
+        }
+
+        /// <summary>
+        /// Defragments the data file by removing deleted records.
+        /// </summary>
+        /// <returns>The number of purged records.</returns>
+        public int Purge()
+        {
+            var tempFilePath = Path.GetTempFileName();
+            int purgedCount = 0;
+
+            using (var tempFileStream = new FileStream(tempFilePath, FileMode.Create))
+            using (var writer = new BinaryWriter(tempFileStream))
+            {
+                this.fileStream.Seek(0, SeekOrigin.Begin);
+
+                while (this.fileStream.Position < this.fileStream.Length)
+                {
+                    var recordBytes = new byte[RecordSize];
+                    this.fileStream.Read(recordBytes, 0, RecordSize);
+
+                    var isDeleted = BitConverter.ToBoolean(recordBytes, 0);
+
+                    if (!isDeleted)
+                    {
+                        writer.Write(recordBytes);
+                    }
+                    else
+                    {
+                        purgedCount++;
+                    }
+                }
+            }
+
+            this.fileStream.Close();
+            File.Delete(this.fileStream.Name);
+            File.Move(tempFilePath, this.fileStream.Name);
+            this.fileStream = new FileStream(this.fileStream.Name, FileMode.Open);
+
+            return purgedCount;
         }
 
         private static char[] PadRight(string value, int length)

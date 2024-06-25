@@ -46,7 +46,7 @@ namespace FileCabinetApp
         /// Gets the number of records in the file cabinet.
         /// </summary>
         /// <returns>The number of records in the file cabinet.</returns>
-        int GetStat();
+        (int Total, int Deleted) GetStat();
 
         /// <summary>
         /// Finds records by first name.
@@ -74,5 +74,17 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>Shot.</returns>
         FileCabinetServiceSnapshot MakeSnapshot();
+
+        /// <summary>
+        /// Removes the record with the specified ID.
+        /// </summary>
+        /// <param name="id">The ID of the record to remove.</param>
+        void RemoveRecord(int id);
+
+        /// <summary>
+        /// Defragments the data file by removing deleted records.
+        /// </summary>
+        /// <returns>The number of purged records.</returns>
+        int Purge();
     }
 }
