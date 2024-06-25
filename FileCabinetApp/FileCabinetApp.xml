@@ -308,9 +308,9 @@
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
             <summary>
-            Создает снимок текущего состояния записей.
+            Make a shot.
             </summary>
-            <returns>Снимок текущего состояния записей.</returns>
+            <returns>Shot.</returns>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>

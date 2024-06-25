@@ -56,6 +56,19 @@ namespace FileCabinetApp
             return record.Id;
         }
 
+        public void CreateRecord(FileCabinetRecord record)
+        {
+            this.validator.ValidateParameters(record.FirstName, record.LastName, record.DateOfBirth, record.Age, record.Salary, record.Gender);
+
+            var existingRecord = this.list.FirstOrDefault(r => r.Id == record.Id);
+            if (existingRecord != null)
+            {
+                this.list.Remove(existingRecord);
+            }
+
+            this.list.Add(record);
+            this.AddRecordToDictionaries(record);
+        }
         /// <summary>
         /// Edits an existing record.
         /// </summary>

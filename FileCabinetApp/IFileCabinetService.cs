@@ -70,9 +70,9 @@ namespace FileCabinetApp
         ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth);
 
         /// <summary>
-        /// Создает снимок текущего состояния записей.
+        /// Make a shot.
         /// </summary>
-        /// <returns>Снимок текущего состояния записей.</returns>
+        /// <returns>Shot.</returns>
         FileCabinetServiceSnapshot MakeSnapshot();
     }
 }

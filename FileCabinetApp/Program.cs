@@ -23,6 +23,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
+            new Tuple<string, Action<string>>("import", Import),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -35,6 +36,7 @@ namespace FileCabinetApp
             new string[] { "edit", "edits an existing record", "The 'edit' command edits an existing record." },
             new string[] { "find", "finds records by a property", "The 'find' command finds records by a property." },
             new string[] { "export", "exports records to a file", "The 'export' command exports records to a file. Usage: export <format> <filename>." },
+            new string[] { "import", "imports records from a file", "The 'import' command imports records from a file. Usage: import <format> <filename>." },
         };
 
         /// <summary>
@@ -383,5 +385,111 @@ namespace FileCabinetApp
                 Console.WriteLine($"Export failed: {ex.Message}");
             }
         }
+
+        private static void Import(string parameters)
+        {
+            var inputs = parameters.Split(' ', 2);
+            if (inputs.Length < 2)
+            {
+                Console.WriteLine("Invalid parameters. Usage: import <format> <filename>");
+                return;
+            }
+
+            var format = inputs[0];
+            var path = inputs[1];
+
+            if (format.Equals("csv", StringComparison.InvariantCultureIgnoreCase))
+            {
+                ImportCsv(path);
+            }
+            else if (format.Equals("xml", StringComparison.InvariantCultureIgnoreCase))
+            {
+                ImportXml(path);
+            }
+            else
+            {
+                Console.WriteLine($"Import in {format} format is not supported.");
+            }
+        }
+
+        private static void ImportCsv(string path)
+        {
+            if (!File.Exists(path))
+            {
+                Console.WriteLine($"Import error: file {path} does not exist.");
+                return;
+            }
+
+            try
+            {
+                using var reader = new StreamReader(path);
+                var csvReader = new FileCabinetRecordCsvReader(reader);
+                var records = csvReader.ReadAll();
+
+                int importedCount = 0;
+                foreach (var record in records)
+                {
+                    try
+                    {
+                        fileCabinetService.CreateRecord(record.FirstName, record.LastName, record.DateOfBirth, record.Age, record.Salary, record.Gender);
+                        importedCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error importing record with ID {record.Id}: {ex.Message}");
+                    }
+                }
+
+                Console.WriteLine($"{importedCount} records were imported from {path}.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Import failed: {ex.Message}");
+            }
+        }
+
+        private static void ImportXml(string path)
+        {
+            if (!File.Exists(path))
+            {
+                Console.WriteLine($"Import error: file {path} does not exist.");
+                return;
+            }
+
+            try
+            {
+                using var reader = new StreamReader(path);
+                var xmlReader = new FileCabinetRecordXmlReader();
+                var records = xmlReader.ReadAll(reader);
+
+                int importedCount = 0;
+                foreach (var record in records)
+                {
+                    try
+                    {
+                        fileCabinetService.CreateRecord(
+                            record.FirstName,
+                            record.LastName,
+                            record.DateOfBirth,
+                            record.Age,
+                            record.Salary,
+                            record.Gender
+                        );
+                        importedCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error importing record with ID {record.Id}: {ex.Message}");
+                    }
+                }
+
+                Console.WriteLine($"{importedCount} records were imported from {path}.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Import failed: {ex.Message}");
+            }
+        }
+
     }
 }
