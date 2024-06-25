@@ -125,10 +125,6 @@ namespace FileCabinetApp
             }
         }
 
-        private int GetNextId()
-        {
-            return this.GetRecords().Max(r => r.Id) + 1;
-        }
         /// <summary>
         /// Edits an existing record in the file system.
         /// </summary>

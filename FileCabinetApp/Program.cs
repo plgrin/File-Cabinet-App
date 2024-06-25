@@ -402,6 +402,10 @@ namespace FileCabinetApp
             {
                 ImportCsv(path);
             }
+            else if (format.Equals("xml", StringComparison.InvariantCultureIgnoreCase))
+            {
+                ImportXml(path);
+            }
             else
             {
                 Console.WriteLine($"Import in {format} format is not supported.");
@@ -428,6 +432,49 @@ namespace FileCabinetApp
                     try
                     {
                         fileCabinetService.CreateRecord(record.FirstName, record.LastName, record.DateOfBirth, record.Age, record.Salary, record.Gender);
+                        importedCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error importing record with ID {record.Id}: {ex.Message}");
+                    }
+                }
+
+                Console.WriteLine($"{importedCount} records were imported from {path}.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Import failed: {ex.Message}");
+            }
+        }
+
+        private static void ImportXml(string path)
+        {
+            if (!File.Exists(path))
+            {
+                Console.WriteLine($"Import error: file {path} does not exist.");
+                return;
+            }
+
+            try
+            {
+                using var reader = new StreamReader(path);
+                var xmlReader = new FileCabinetRecordXmlReader();
+                var records = xmlReader.ReadAll(reader);
+
+                int importedCount = 0;
+                foreach (var record in records)
+                {
+                    try
+                    {
+                        fileCabinetService.CreateRecord(
+                            record.FirstName,
+                            record.LastName,
+                            record.DateOfBirth,
+                            record.Age,
+                            record.Salary,
+                            record.Gender
+                        );
                         importedCount++;
                     }
                     catch (Exception ex)
