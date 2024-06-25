@@ -70,6 +70,65 @@ namespace FileCabinetApp
             return record.Id;
         }
 
+        public void CreateRecord(FileCabinetRecord record)
+        {
+            this.validator.ValidateParameters(record.FirstName, record.LastName, record.DateOfBirth, record.Age, record.Salary, record.Gender);
+
+            var existingRecord = this.GetRecords().FirstOrDefault(r => r.Id == record.Id);
+            if (existingRecord != null)
+            {
+                this.RemoveRecordFromFile(existingRecord.Id);
+            }
+
+            this.SaveRecord(record);
+        }
+
+        private void SaveRecord(FileCabinetRecord record)
+        {
+            using (BinaryWriter writer = new BinaryWriter(this.fileStream, System.Text.Encoding.UTF8, true))
+            {
+                writer.Seek(0, SeekOrigin.End);
+                writer.Write((short)0);
+                writer.Write(record.Id);
+                writer.Write(record.FirstName.PadRight(60));
+                writer.Write(record.LastName.PadRight(60));
+                writer.Write(record.DateOfBirth.Year);
+                writer.Write(record.DateOfBirth.Month);
+                writer.Write(record.DateOfBirth.Day);
+                writer.Write(record.Age);
+                writer.Write(record.Salary);
+                writer.Write(record.Gender);
+            }
+        }
+
+        private void RemoveRecordFromFile(int id)
+        {
+            using (BinaryReader reader = new BinaryReader(this.fileStream, System.Text.Encoding.UTF8, true))
+            using (BinaryWriter writer = new BinaryWriter(this.fileStream, System.Text.Encoding.UTF8, true))
+            {
+                this.fileStream.Seek(0, SeekOrigin.Begin);
+                while (this.fileStream.Position < this.fileStream.Length)
+                {
+                    long position = this.fileStream.Position;
+                    short status = reader.ReadInt16();
+                    int recordId = reader.ReadInt32();
+
+                    if (recordId == id)
+                    {
+                        writer.Seek((int)position, SeekOrigin.Begin);
+                        writer.Write((short)1);
+                        break;
+                    }
+
+                    this.fileStream.Seek(272, SeekOrigin.Current);
+                }
+            }
+        }
+
+        private int GetNextId()
+        {
+            return this.GetRecords().Max(r => r.Id) + 1;
+        }
         /// <summary>
         /// Edits an existing record in the file system.
         /// </summary>
