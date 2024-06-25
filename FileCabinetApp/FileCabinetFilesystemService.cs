@@ -13,7 +13,7 @@ namespace FileCabinetApp
     public class FileCabinetFilesystemService : IFileCabinetService
     {
         private const int RecordSize = 278;
-        private readonly FileStream fileStream;
+        private FileStream fileStream;
         private readonly IRecordValidator validator;
 
         /// <summary>
@@ -422,6 +422,46 @@ namespace FileCabinetApp
                 }
             }
             throw new ArgumentException($"Record #{id} doesn't exist.");
+        }
+
+        /// <summary>
+        /// Defragments the data file by removing deleted records.
+        /// </summary>
+        /// <returns>The number of purged records.</returns>
+        public int Purge()
+        {
+            var tempFilePath = Path.GetTempFileName();
+            int purgedCount = 0;
+
+            using (var tempFileStream = new FileStream(tempFilePath, FileMode.Create))
+            using (var writer = new BinaryWriter(tempFileStream))
+            {
+                this.fileStream.Seek(0, SeekOrigin.Begin);
+
+                while (this.fileStream.Position < this.fileStream.Length)
+                {
+                    var recordBytes = new byte[RecordSize];
+                    this.fileStream.Read(recordBytes, 0, RecordSize);
+
+                    var isDeleted = BitConverter.ToBoolean(recordBytes, 0);
+
+                    if (!isDeleted)
+                    {
+                        writer.Write(recordBytes);
+                    }
+                    else
+                    {
+                        purgedCount++;
+                    }
+                }
+            }
+
+            this.fileStream.Close();
+            File.Delete(this.fileStream.Name);
+            File.Move(tempFilePath, this.fileStream.Name);
+            this.fileStream = new FileStream(this.fileStream.Name, FileMode.Open);
+
+            return purgedCount;
         }
 
         private static char[] PadRight(string value, int length)

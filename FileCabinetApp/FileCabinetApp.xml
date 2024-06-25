@@ -126,6 +126,12 @@
             <param name="id">The ID of the record to remove.</param>
             <exception cref="T:System.ArgumentException">Thrown when the record with the specified ID doesn't exist.</exception>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Purge">
+            <summary>
+            Defragments the data file by removing deleted records.
+            </summary>
+            <returns>The number of purged records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
             Provides methods to manage file cabinet records.
@@ -324,6 +330,12 @@
             Removes the record with the specified ID.
             </summary>
             <param name="id">The ID of the record to remove.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.Purge">
+            <summary>
+            Defragments the data file by removing deleted records.
+            </summary>
+            <returns>The number of purged records.</returns>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>

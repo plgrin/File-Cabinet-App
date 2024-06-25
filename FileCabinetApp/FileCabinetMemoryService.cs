@@ -174,6 +174,28 @@ namespace FileCabinetApp
 
         //protected abstract void ValidateParameters(string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender);
 
+        public int Purge()
+        {
+            // No action needed for memory service
+            return 0;
+        }
+
+        public void RemoveRecord(int id)
+        {
+            var record = this.list.FirstOrDefault(r => r.Id == id);
+            if (record != null)
+            {
+                this.list.Remove(record);
+                this.firstNameDictionary[record.FirstName].Remove(record);
+                this.lastNameDictionary[record.LastName].Remove(record);
+                this.dateOfBirthDictionary[record.DateOfBirth].Remove(record);
+            }
+            else
+            {
+                throw new ArgumentException($"Record #{id} doesn't exist.");
+            }
+        }
+
         private void RemoveRecordFromDictionaries(FileCabinetRecord record)
         {
             this.firstNameDictionary[record.FirstName].Remove(record);
@@ -218,22 +240,5 @@ namespace FileCabinetApp
 
             this.dateOfBirthDictionary[record.DateOfBirth].Add(record);
         }
-
-        public void RemoveRecord(int id)
-        {
-            var record = this.list.FirstOrDefault(r => r.Id == id);
-            if (record != null)
-            {
-                this.list.Remove(record);
-                this.firstNameDictionary[record.FirstName].Remove(record);
-                this.lastNameDictionary[record.LastName].Remove(record);
-                this.dateOfBirthDictionary[record.DateOfBirth].Remove(record);
-            }
-            else
-            {
-                throw new ArgumentException($"Record #{id} doesn't exist.");
-            }
-        }
-
     }
 }
