@@ -70,9 +70,51 @@ namespace FileCabinetApp
             return record.Id;
         }
 
+        /// <summary>
+        /// Edits an existing record in the file system.
+        /// </summary>
+        /// <param name="id">The ID of the record to edit.</param>
+        /// <param name="firstName">The first name.</param>
+        /// <param name="lastName">The last name.</param>
+        /// <param name="dateOfBirth">The date of birth.</param>
+        /// <param name="age">The age.</param>
+        /// <param name="salary">The salary.</param>
+        /// <param name="gender">The gender.</param>
         public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender)
         {
-            throw new NotImplementedException();
+            this.validator.ValidateParameters(firstName, lastName, dateOfBirth, age, salary, gender);
+
+            using (BinaryWriter writer = new BinaryWriter(this.fileStream, Encoding.UTF8, true))
+            using (BinaryReader reader = new BinaryReader(this.fileStream, Encoding.UTF8, true))
+            {
+                this.fileStream.Seek(0, SeekOrigin.Begin);
+
+                while (this.fileStream.Position < this.fileStream.Length)
+                {
+                    var status = reader.ReadInt16();
+                    var currentId = reader.ReadInt32();
+
+                    if (currentId == id)
+                    {
+                        this.fileStream.Seek(-6, SeekOrigin.Current); // Move back to the start of the status field
+                        writer.Write((short)0); // Status
+                        writer.Write(id);
+                        writer.Write(PadRight(firstName, 60));
+                        writer.Write(PadRight(lastName, 60));
+                        writer.Write(dateOfBirth.Year);
+                        writer.Write(dateOfBirth.Month);
+                        writer.Write(dateOfBirth.Day);
+                        writer.Write(age);
+                        writer.Write(salary);
+                        writer.Write(gender);
+                        return;
+                    }
+
+                    this.fileStream.Seek(RecordSize - 6, SeekOrigin.Current); // Move to the next record
+                }
+
+                throw new ArgumentException($"Record with ID {id} not found.");
+            }
         }
 
         /// <summary>

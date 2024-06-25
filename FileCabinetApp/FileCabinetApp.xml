@@ -68,6 +68,18 @@
             <param name="gender">The gender.</param>
             <returns>The ID of the created record.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.EditRecord(System.Int32,System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Edits an existing record in the file system.
+            </summary>
+            <param name="id">The ID of the record to edit.</param>
+            <param name="firstName">The first name.</param>
+            <param name="lastName">The last name.</param>
+            <param name="dateOfBirth">The date of birth.</param>
+            <param name="age">The age.</param>
+            <param name="salary">The salary.</param>
+            <param name="gender">The gender.</param>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetRecords">
             <summary>
             Gets all records from the file system.
