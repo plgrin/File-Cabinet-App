@@ -44,6 +44,11 @@ namespace FileCabinetGenerator
                 Console.WriteLine($"Records Amount: {recordsAmount}");
                 Console.WriteLine($"Start ID: {startId}");
 
+                var records = RecordGenerator.GenerateRecords(startId, recordsAmount);
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth}, {record.Age}, {record.Salary}, {record.Gender}");
+                }
             },
             outputTypeOption, outputOption, recordsAmountOption, startIdOption);
 
