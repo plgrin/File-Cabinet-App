@@ -89,7 +89,7 @@ namespace FileCabinetApp
             {
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
-                    var status = reader.ReadInt16();
+                    //var status = reader.ReadInt16();
                     var id = reader.ReadInt32();
                     var firstName = new string(reader.ReadChars(60)).Trim();
                     var lastName = new string(reader.ReadChars(60)).Trim();
@@ -118,9 +118,13 @@ namespace FileCabinetApp
             return new ReadOnlyCollection<FileCabinetRecord>(records);
         }
 
+        /// <summary>
+        /// Gets the total number of records in the file system.
+        /// </summary>
+        /// <returns>The number of records.</returns>
         public int GetStat()
         {
-            throw new NotImplementedException();
+            return (int)(this.fileStream.Length / RecordSize);
         }
 
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)

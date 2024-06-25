@@ -74,6 +74,12 @@
             </summary>
             <returns>A read-only collection of file cabinet records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetStat">
+            <summary>
+            Gets the total number of records in the file system.
+            </summary>
+            <returns>The number of records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
             Provides methods to manage file cabinet records.
