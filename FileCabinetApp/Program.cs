@@ -101,49 +101,23 @@
             {
                 try
                 {
-                    string firstName;
-                    do
-                    {
-                        Console.Write("First name: ");
-                        firstName = Console.ReadLine();
-                    }
-                    while (string.IsNullOrWhiteSpace(firstName) || firstName.Length < 2 || firstName.Length > 60);
+                    Console.Write("First name: ");
+                    var firstName = ReadInput(Converters.StringConverter, Validators.FirstNameValidator);
 
-                    string lastName;
-                    do
-                    {
-                        Console.Write("Last name: ");
-                        lastName = Console.ReadLine();
-                    }
-                    while (string.IsNullOrWhiteSpace(lastName) || lastName.Length < 2 || lastName.Length > 60);
+                    Console.Write("Last name: ");
+                    var lastName = ReadInput(Converters.StringConverter, Validators.LastNameValidator);
 
-                    DateTime dateOfBirth;
-                    do
-                    {
-                        Console.Write("Date of birth (dd/mm/yyyy): ");
-                    }
-                    while (!DateTime.TryParse(Console.ReadLine(), out dateOfBirth) || dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now);
+                    Console.Write("Date of birth (mm/dd/yyyy): ");
+                    var dateOfBirth = ReadInput(Converters.DateConverter, Validators.DateOfBirthValidator);
 
-                    short age;
-                    do
-                    {
-                        Console.Write("Age: ");
-                    }
-                    while (!short.TryParse(Console.ReadLine(), out age) || age < 0 || age > 120);
+                    Console.Write("Age: ");
+                    var age = ReadInput(Converters.ShortConverter, Validators.AgeValidator);
 
-                    decimal salary;
-                    do
-                    {
-                        Console.Write("Salary: ");
-                    }
-                    while (!decimal.TryParse(Console.ReadLine(), out salary) || salary < 0);
+                    Console.Write("Salary: ");
+                    var salary = ReadInput(Converters.DecimalConverter, Validators.SalaryValidator);
 
-                    char gender;
-                    do
-                    {
-                        Console.Write("Gender (M/F): ");
-                    }
-                    while (!char.TryParse(Console.ReadLine(), out gender) || !"MF".Contains(gender));
+                    Console.Write("Gender (M/F): ");
+                    var gender = ReadInput(Converters.CharConverter, Validators.GenderValidator);
 
                     fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, age, salary, gender);
                     Console.WriteLine($"Record #{id} is updated.");
@@ -161,49 +135,23 @@
 
         private static void Create(string parameters)
         {
-            string firstName;
-            do
-            {
-                Console.Write("First name: ");
-                firstName = Console.ReadLine();
-            }
-            while (string.IsNullOrWhiteSpace(firstName) || firstName.Length < 2 || firstName.Length > 60);
+            Console.Write("First name: ");
+            var firstName = ReadInput(Converters.StringConverter, Validators.FirstNameValidator);
 
-            string lastName;
-            do
-            {
-                Console.Write("Last name: ");
-                lastName = Console.ReadLine();
-            }
-            while (string.IsNullOrWhiteSpace(lastName) || lastName.Length < 2 || lastName.Length > 60);
+            Console.Write("Last name: ");
+            var lastName = ReadInput(Converters.StringConverter, Validators.LastNameValidator);
 
-            DateTime dateOfBirth;
-            do
-            {
-                Console.Write("Date of birth (dd/mm/yyyy): ");
-            }
-            while (!DateTime.TryParse(Console.ReadLine(), out dateOfBirth) || dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now);
+            Console.Write("Date of birth (mm/dd/yyyy): ");
+            var dateOfBirth = ReadInput(Converters.DateConverter, Validators.DateOfBirthValidator);
 
-            short age;
-            do
-            {
-                Console.Write("Age: ");
-            }
-            while (!short.TryParse(Console.ReadLine(), out age) || age < 0 || age > 120);
+            Console.Write("Age: ");
+            var age = ReadInput(Converters.ShortConverter, Validators.AgeValidator);
 
-            decimal salary;
-            do
-            {
-                Console.Write("Salary: ");
-            }
-            while (!decimal.TryParse(Console.ReadLine(), out salary) || salary < 0);
+            Console.Write("Salary: ");
+            var salary = ReadInput(Converters.DecimalConverter, Validators.SalaryValidator);
 
-            char gender;
-            do
-            {
-                Console.Write("Gender (M/F): ");
-            }
-            while (!char.TryParse(Console.ReadLine(), out gender) || !"MF".Contains(gender));
+            Console.Write("Gender (M/F): ");
+            var gender = ReadInput(Converters.CharConverter, Validators.GenderValidator);
 
             int recordId = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, salary, gender);
             Console.WriteLine($"Record #{recordId} is created.");
@@ -303,6 +251,35 @@
         {
             Console.WriteLine("Exiting an application...");
             isRunning = false;
+        }
+
+        private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
+        {
+            do
+            {
+                T value;
+
+                var input = Console.ReadLine();
+                var conversionResult = converter(input);
+
+                if (!conversionResult.Item1)
+                {
+                    Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                value = conversionResult.Item3;
+
+                var validationResult = validator(value);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine($"Validation failed: {validationResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                return value;
+            }
+            while (true);
         }
     }
 }
