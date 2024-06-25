@@ -75,9 +75,47 @@ namespace FileCabinetApp
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets all records from the file system.
+        /// </summary>
+        /// <returns>A read-only collection of file cabinet records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            throw new NotImplementedException();
+            var records = new List<FileCabinetRecord>();
+
+            this.fileStream.Seek(0, SeekOrigin.Begin);
+
+            using (BinaryReader reader = new BinaryReader(this.fileStream, Encoding.UTF8, true))
+            {
+                while (this.fileStream.Position < this.fileStream.Length)
+                {
+                    var status = reader.ReadInt16();
+                    var id = reader.ReadInt32();
+                    var firstName = new string(reader.ReadChars(60)).Trim();
+                    var lastName = new string(reader.ReadChars(60)).Trim();
+                    var year = reader.ReadInt32();
+                    var month = reader.ReadInt32();
+                    var day = reader.ReadInt32();
+                    var age = reader.ReadInt16();
+                    var salary = reader.ReadDecimal();
+                    var gender = reader.ReadChar();
+
+                    var record = new FileCabinetRecord
+                    {
+                        Id = id,
+                        FirstName = firstName,
+                        LastName = lastName,
+                        DateOfBirth = new DateTime(year, month, day),
+                        Age = age,
+                        Salary = salary,
+                        Gender = gender,
+                    };
+
+                    records.Add(record);
+                }
+            }
+
+            return new ReadOnlyCollection<FileCabinetRecord>(records);
         }
 
         public int GetStat()
