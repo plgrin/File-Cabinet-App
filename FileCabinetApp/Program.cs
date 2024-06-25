@@ -67,13 +67,13 @@
             Console.WriteLine(HintMessage);
             Console.WriteLine();
 
-            do
+            while (isRunning)
             {
                 Console.Write("> ");
                 var line = Console.ReadLine();
                 var inputs = line != null ? line.Split(' ', 2) : new string[] { string.Empty, string.Empty };
-                const int commandIndex = 0;
-                var command = inputs[commandIndex];
+                const int CommandIndex = 0;
+                var command = inputs[CommandIndex];
 
                 if (string.IsNullOrEmpty(command))
                 {
@@ -81,11 +81,11 @@
                     continue;
                 }
 
-                var index = Array.FindIndex(сommands, 0, сommands.Length, i => i.Item1.Equals(command, StringComparison.OrdinalIgnoreCase));
+                var index = Array.FindIndex(сommands, 0, сommands.Length, i => i.Item1.Equals(command, StringComparison.InvariantCultureIgnoreCase));
                 if (index >= 0)
                 {
-                    const int parametersIndex = 1;
-                    var parameters = inputs.Length > 1 ? inputs[parametersIndex] : string.Empty;
+                    const int ParametersIndex = 1;
+                    var parameters = inputs.Length > 1 ? inputs[ParametersIndex] : string.Empty;
                     сommands[index].Item2(parameters);
                 }
                 else
@@ -93,7 +93,6 @@
                     PrintMissedCommandInfo(command);
                 }
             }
-            while (isRunning);
         }
 
         private static void Edit(string parameters)
@@ -281,7 +280,7 @@
 
         private static void Stat(string parameters)
         {
-            var recordsCount = Program.fileCabinetService.GetStat();
+            var recordsCount = fileCabinetService.GetStat();
             Console.WriteLine($"{recordsCount} record(s).");
         }
 

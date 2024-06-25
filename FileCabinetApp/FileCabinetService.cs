@@ -12,9 +12,16 @@ namespace FileCabinetApp
     public abstract class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+        private readonly IRecordValidator validator;
+
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
+
+        public FileCabinetService(IRecordValidator validator)
+        {
+            this.validator = validator;
+        }
 
         /// <summary>
         /// Creates a new record.
@@ -29,7 +36,7 @@ namespace FileCabinetApp
         /// <exception cref="ArgumentException">Thrown when one of the parameters is invalid.</exception>
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender)
         {
-            ValidateParameters(firstName, lastName, dateOfBirth, age, salary, gender);
+            this.validator.ValidateParameters(firstName, lastName, dateOfBirth, age, salary, gender);
 
             var record = new FileCabinetRecord
             {
@@ -68,7 +75,7 @@ namespace FileCabinetApp
                 throw new ArgumentException($"Record with id {id} does not exist.");
             }
 
-            ValidateParameters(firstName, lastName, dateOfBirth, age, salary, gender);
+            this.validator.ValidateParameters(firstName, lastName, dateOfBirth, age, salary, gender);
 
             this.RemoveRecordFromDictionaries(record);
 
@@ -146,7 +153,7 @@ namespace FileCabinetApp
             return this.list.Count;
         }
 
-        protected abstract void ValidateParameters(string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender);
+        //protected abstract void ValidateParameters(string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender);
 
         private void RemoveRecordFromDictionaries(FileCabinetRecord record)
         {
