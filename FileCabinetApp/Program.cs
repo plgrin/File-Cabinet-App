@@ -1,4 +1,6 @@
-﻿namespace FileCabinetApp
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FileCabinetApp
 {
     /// <summary>
     /// Main class for the File Cabinet Application.
@@ -42,27 +44,49 @@
         public static void Main(string[] args)
         {
             string validationRules = "default";
+            string storageType = "memory";
             foreach (string arg in args)
             {
                 if (arg.StartsWith("--validation-rules=", StringComparison.InvariantCultureIgnoreCase))
                 {
                     validationRules = arg.Substring("--validation-rules=".Length);
                 }
-                else if (arg.StartsWith("-v ", StringComparison.InvariantCultureIgnoreCase))
+                else if (arg.StartsWith("-v", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    validationRules = arg.Substring("-v ".Length);
+                    validationRules = arg.Substring(2);
+                }
+                else if (arg.StartsWith("--storage=", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    storageType = arg.Substring("--storage=".Length);
+                }
+                else if (arg.StartsWith("-s", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    storageType = arg.Substring(2);
                 }
             }
 
+            IRecordValidator validator;
             if (validationRules.Equals("custom", StringComparison.OrdinalIgnoreCase))
             {
-                fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
+                validator = new CustomValidator();
                 Console.WriteLine("Using custom validation rules.");
             }
             else
             {
-                fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+                validator = new DefaultValidator();
                 Console.WriteLine("Using default validation rules.");
+            }
+
+            if (storageType.Equals("file", StringComparison.OrdinalIgnoreCase))
+            {
+                var fileStream = new FileStream("cabinet-records.db", FileMode.OpenOrCreate);
+                fileCabinetService = new FileCabinetFilesystemService(fileStream, validator);
+                Console.WriteLine("Using file storage.");
+            }
+            else
+            {
+                fileCabinetService = new FileCabinetMemoryService(validator);
+                Console.WriteLine("Using memory storage.");
             }
 
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
