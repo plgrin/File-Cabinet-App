@@ -131,7 +131,7 @@ namespace FileCabinetApp
             {
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
-                    //var status = reader.ReadInt16();
+                    var status = reader.ReadInt16();
                     var id = reader.ReadInt32();
                     var firstName = new string(reader.ReadChars(60)).Trim();
                     var lastName = new string(reader.ReadChars(60)).Trim();
@@ -169,24 +169,174 @@ namespace FileCabinetApp
             return (int)(this.fileStream.Length / RecordSize);
         }
 
+        /// <summary>
+        /// Finds records by first name.
+        /// </summary>
+        /// <param name="firstName">The first name to search for.</param>
+        /// <returns>A read-only collection of matching records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            throw new NotImplementedException();
+            var records = new List<FileCabinetRecord>();
+
+            this.fileStream.Seek(0, SeekOrigin.Begin);
+
+            using (BinaryReader reader = new BinaryReader(this.fileStream, Encoding.UTF8, true))
+            {
+                while (this.fileStream.Position < this.fileStream.Length)
+                {
+                    var status = reader.ReadInt16();
+                    var id = reader.ReadInt32();
+                    var recordFirstName = new string(reader.ReadChars(60)).Trim();
+                    var lastName = new string(reader.ReadChars(60)).Trim();
+                    var year = reader.ReadInt32();
+                    var month = reader.ReadInt32();
+                    var day = reader.ReadInt32();
+                    var age = reader.ReadInt16();
+                    var salary = reader.ReadDecimal();
+                    var gender = reader.ReadChar();
+
+                    if (string.Equals(recordFirstName, firstName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        var record = new FileCabinetRecord
+                        {
+                            Id = id,
+                            FirstName = recordFirstName,
+                            LastName = lastName,
+                            DateOfBirth = new DateTime(year, month, day),
+                            Age = age,
+                            Salary = salary,
+                            Gender = gender,
+                        };
+
+                        records.Add(record);
+                    }
+                    else
+                    {
+                        this.fileStream.Seek(RecordSize - 142, SeekOrigin.Current); // Skip the rest of the record
+                    }
+                }
+            }
+
+            return new ReadOnlyCollection<FileCabinetRecord>(records);
         }
 
+        /// <summary>
+        /// Finds records by last name.
+        /// </summary>
+        /// <param name="lastName">The last name to search for.</param>
+        /// <returns>A read-only collection of matching records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
-            throw new NotImplementedException();
+            var records = new List<FileCabinetRecord>();
+
+            this.fileStream.Seek(0, SeekOrigin.Begin);
+
+            using (BinaryReader reader = new BinaryReader(this.fileStream, Encoding.UTF8, true))
+            {
+                while (this.fileStream.Position < this.fileStream.Length)
+                {
+                    var status = reader.ReadInt16();
+                    var id = reader.ReadInt32();
+                    var firstName = new string(reader.ReadChars(60)).Trim();
+                    var recordLastName = new string(reader.ReadChars(60)).Trim();
+                    var year = reader.ReadInt32();
+                    var month = reader.ReadInt32();
+                    var day = reader.ReadInt32();
+                    var age = reader.ReadInt16();
+                    var salary = reader.ReadDecimal();
+                    var gender = reader.ReadChar();
+
+                    if (string.Equals(recordLastName, lastName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        var record = new FileCabinetRecord
+                        {
+                            Id = id,
+                            FirstName = firstName,
+                            LastName = recordLastName,
+                            DateOfBirth = new DateTime(year, month, day),
+                            Age = age,
+                            Salary = salary,
+                            Gender = gender,
+                        };
+
+                        records.Add(record);
+                    }
+                    else
+                    {
+                        this.fileStream.Seek(RecordSize - 142, SeekOrigin.Current); // Skip the rest of the record
+                    }
+                }
+            }
+
+            return new ReadOnlyCollection<FileCabinetRecord>(records);
         }
 
+        /// <summary>
+        /// Finds records by date of birth.
+        /// </summary>
+        /// <param name="dateOfBirth">The date of birth to search for.</param>
+        /// <returns>A read-only collection of matching records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
-            throw new NotImplementedException();
+            var records = new List<FileCabinetRecord>();
+
+            if (!DateTime.TryParse(dateOfBirth, out var dob))
+            {
+                throw new ArgumentException("Invalid date format", nameof(dateOfBirth));
+            }
+
+            this.fileStream.Seek(0, SeekOrigin.Begin);
+
+            using (BinaryReader reader = new BinaryReader(this.fileStream, Encoding.UTF8, true))
+            {
+                while (this.fileStream.Position < this.fileStream.Length)
+                {
+                    var status = reader.ReadInt16();
+                    var id = reader.ReadInt32();
+                    var firstName = new string(reader.ReadChars(60)).Trim();
+                    var lastName = new string(reader.ReadChars(60)).Trim();
+                    var year = reader.ReadInt32();
+                    var month = reader.ReadInt32();
+                    var day = reader.ReadInt32();
+                    var age = reader.ReadInt16();
+                    var salary = reader.ReadDecimal();
+                    var gender = reader.ReadChar();
+
+                    var recordDateOfBirth = new DateTime(year, month, day);
+
+                    if (recordDateOfBirth == dob)
+                    {
+                        var record = new FileCabinetRecord
+                        {
+                            Id = id,
+                            FirstName = firstName,
+                            LastName = lastName,
+                            DateOfBirth = recordDateOfBirth,
+                            Age = age,
+                            Salary = salary,
+                            Gender = gender,
+                        };
+
+                        records.Add(record);
+                    }
+                    else
+                    {
+                        this.fileStream.Seek(RecordSize - 142, SeekOrigin.Current); // Skip the rest of the record
+                    }
+                }
+            }
+
+            return new ReadOnlyCollection<FileCabinetRecord>(records);
         }
 
+        /// <summary>
+        /// Creates a snapshot of the current state of the records in the file system.
+        /// </summary>
+        /// <returns>A snapshot of the current state of the records.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
-            throw new NotImplementedException();
+            var records = this.GetRecords();
+            return new FileCabinetServiceSnapshot(new List<FileCabinetRecord>(records));
         }
 
         private static char[] PadRight(string value, int length)

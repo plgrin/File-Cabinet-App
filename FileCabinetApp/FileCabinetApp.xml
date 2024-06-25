@@ -92,6 +92,33 @@
             </summary>
             <returns>The number of records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByFirstName(System.String)">
+            <summary>
+            Finds records by first name.
+            </summary>
+            <param name="firstName">The first name to search for.</param>
+            <returns>A read-only collection of matching records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByLastName(System.String)">
+            <summary>
+            Finds records by last name.
+            </summary>
+            <param name="lastName">The last name to search for.</param>
+            <returns>A read-only collection of matching records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByDateOfBirth(System.String)">
+            <summary>
+            Finds records by date of birth.
+            </summary>
+            <param name="dateOfBirth">The date of birth to search for.</param>
+            <returns>A read-only collection of matching records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.MakeSnapshot">
+            <summary>
+            Creates a snapshot of the current state of the records in the file system.
+            </summary>
+            <returns>A snapshot of the current state of the records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
             Provides methods to manage file cabinet records.
