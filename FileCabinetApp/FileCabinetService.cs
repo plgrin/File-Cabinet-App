@@ -9,7 +9,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Provides methods to manage file cabinet records.
     /// </summary>
-    public abstract class FileCabinetService
+    public class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private readonly IRecordValidator validator;
