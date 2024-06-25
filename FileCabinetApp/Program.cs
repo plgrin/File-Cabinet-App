@@ -300,6 +300,10 @@
             {
                 ExportCsv(path);
             }
+            else if (format.Equals("xml", StringComparison.InvariantCultureIgnoreCase))
+            {
+                ExportXml(path);
+            }
             else
             {
                 Console.WriteLine($"Export in {format} format is not supported.");
@@ -331,5 +335,29 @@
             }
         }
 
+        private static void ExportXml(string path)
+        {
+            if (File.Exists(path))
+            {
+                Console.Write($"File is exist - rewrite {path}? [Y/n] ");
+                var answer = Console.ReadLine();
+                if (answer.Equals("n", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return;
+                }
+            }
+
+            try
+            {
+                using var writer = new StreamWriter(path);
+                var snapshot = fileCabinetService.MakeSnapshot();
+                snapshot.SaveToXml(writer);
+                Console.WriteLine($"All records are exported to file {path}.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Export failed: {ex.Message}");
+            }
+        }
     }
 }
