@@ -74,5 +74,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>Shot.</returns>
         FileCabinetServiceSnapshot MakeSnapshot();
+
+        /// <summary>
+        /// Removes the record with the specified ID.
+        /// </summary>
+        /// <param name="id">The ID of the record to remove.</param>
+        void RemoveRecord(int id);
     }
 }

@@ -218,5 +218,22 @@ namespace FileCabinetApp
 
             this.dateOfBirthDictionary[record.DateOfBirth].Add(record);
         }
+
+        public void RemoveRecord(int id)
+        {
+            var record = this.list.FirstOrDefault(r => r.Id == id);
+            if (record != null)
+            {
+                this.list.Remove(record);
+                this.firstNameDictionary[record.FirstName].Remove(record);
+                this.lastNameDictionary[record.LastName].Remove(record);
+                this.dateOfBirthDictionary[record.DateOfBirth].Remove(record);
+            }
+            else
+            {
+                throw new ArgumentException($"Record #{id} doesn't exist.");
+            }
+        }
+
     }
 }

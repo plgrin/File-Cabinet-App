@@ -24,6 +24,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
+            new Tuple<string, Action<string>>("remove", Remove),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -37,6 +38,7 @@ namespace FileCabinetApp
             new string[] { "find", "finds records by a property", "The 'find' command finds records by a property." },
             new string[] { "export", "exports records to a file", "The 'export' command exports records to a file. Usage: export <format> <filename>." },
             new string[] { "import", "imports records from a file", "The 'import' command imports records from a file. Usage: import <format> <filename>." },
+            new string[] { "remove", "removes a record by ID", "The 'remove' command removes a record by ID. Usage: remove <id>." },
         };
 
         /// <summary>
@@ -491,5 +493,24 @@ namespace FileCabinetApp
             }
         }
 
+        private static void Remove(string parameters)
+        {
+            if (int.TryParse(parameters, out int id))
+            {
+                try
+                {
+                    fileCabinetService.RemoveRecord(id);
+                    Console.WriteLine($"Record #{id} is removed.");
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid record id.");
+            }
+        }
     }
 }

@@ -119,6 +119,13 @@
             </summary>
             <returns>A snapshot of the current state of the records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.RemoveRecord(System.Int32)">
+            <summary>
+            Removes the record with the specified ID by marking it as deleted.
+            </summary>
+            <param name="id">The ID of the record to remove.</param>
+            <exception cref="T:System.ArgumentException">Thrown when the record with the specified ID doesn't exist.</exception>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
             Provides methods to manage file cabinet records.
@@ -311,6 +318,12 @@
             Make a shot.
             </summary>
             <returns>Shot.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.RemoveRecord(System.Int32)">
+            <summary>
+            Removes the record with the specified ID.
+            </summary>
+            <param name="id">The ID of the record to remove.</param>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>

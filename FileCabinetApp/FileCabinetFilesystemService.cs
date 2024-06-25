@@ -394,6 +394,36 @@ namespace FileCabinetApp
             return new FileCabinetServiceSnapshot(new List<FileCabinetRecord>(records));
         }
 
+        /// <summary>
+        /// Removes the record with the specified ID by marking it as deleted.
+        /// </summary>
+        /// <param name="id">The ID of the record to remove.</param>
+        /// <exception cref="ArgumentException">Thrown when the record with the specified ID doesn't exist.</exception>
+        public void RemoveRecord(int id)
+        {
+            this.fileStream.Seek(0, SeekOrigin.Begin);
+            using (BinaryReader reader = new BinaryReader(this.fileStream, Encoding.UTF8, true))
+            using (BinaryWriter writer = new BinaryWriter(this.fileStream, Encoding.UTF8, true))
+            {
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
+                {
+                    long position = reader.BaseStream.Position;
+                    short status = reader.ReadInt16();
+                    int recordId = reader.ReadInt32();
+
+                    if (recordId == id)
+                    {
+                        writer.Seek((int)position, SeekOrigin.Begin);
+                        writer.Write((short)(status | 0b_0100));
+                        return;
+                    }
+
+                    reader.BaseStream.Seek(RecordSize - sizeof(short) - sizeof(int), SeekOrigin.Current);
+                }
+            }
+            throw new ArgumentException($"Record #{id} doesn't exist.");
+        }
+
         private static char[] PadRight(string value, int length)
         {
             return value.PadRight(length).ToCharArray();
