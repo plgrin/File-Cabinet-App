@@ -20,6 +20,7 @@
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
+            new Tuple<string, Action<string>>("export", Export),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -31,6 +32,7 @@
             new string[] { "list", "lists all records", "The 'list' command lists all records." },
             new string[] { "edit", "edits an existing record", "The 'edit' command edits an existing record." },
             new string[] { "find", "finds records by a property", "The 'find' command finds records by a property." },
+            new string[] { "export", "exports records to a file", "The 'export' command exports records to a file. Usage: export <format> <filename>." },
         };
 
         /// <summary>
@@ -281,5 +283,53 @@
             }
             while (true);
         }
+
+        private static void Export(string parameters)
+        {
+            var inputs = parameters.Split(' ', 2);
+            if (inputs.Length < 2)
+            {
+                Console.WriteLine("Invalid parameters. Usage: export <format> <filename>");
+                return;
+            }
+
+            var format = inputs[0];
+            var path = inputs[1];
+
+            if (format.Equals("csv", StringComparison.InvariantCultureIgnoreCase))
+            {
+                ExportCsv(path);
+            }
+            else
+            {
+                Console.WriteLine($"Export in {format} format is not supported.");
+            }
+        }
+
+        private static void ExportCsv(string path)
+        {
+            if (File.Exists(path))
+            {
+                Console.Write($"File is exist - rewrite {path}? [Y/n] ");
+                var answer = Console.ReadLine();
+                if (answer.Equals("n", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return;
+                }
+            }
+
+            try
+            {
+                using var writer = new StreamWriter(path);
+                var snapshot = fileCabinetService.MakeSnapshot();
+                snapshot.SaveToCsv(writer);
+                Console.WriteLine($"All records are exported to file {path}.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Export failed: {ex.Message}");
+            }
+        }
+
     }
 }

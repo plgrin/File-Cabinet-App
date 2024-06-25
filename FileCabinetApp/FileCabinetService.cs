@@ -154,6 +154,11 @@ namespace FileCabinetApp
             return this.list.Count;
         }
 
+        public FileCabinetServiceSnapshot MakeSnapshot()
+        {
+            return new FileCabinetServiceSnapshot(new List<FileCabinetRecord>(this.list));
+        }
+
         //protected abstract void ValidateParameters(string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender);
 
         private void RemoveRecordFromDictionaries(FileCabinetRecord record)

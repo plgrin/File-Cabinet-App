@@ -68,5 +68,11 @@ namespace FileCabinetApp
         /// <param name="dateOfBirth">The date of birth to search for.</param>
         /// <returns>A read-only collection of records with the specified date of birth.</returns>
         ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth);
+
+        /// <summary>
+        /// Создает снимок текущего состояния записей.
+        /// </summary>
+        /// <returns>Снимок текущего состояния записей.</returns>
+        FileCabinetServiceSnapshot MakeSnapshot();
     }
 }

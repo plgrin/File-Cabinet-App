@@ -231,6 +231,12 @@
             <param name="dateOfBirth">The date of birth to search for.</param>
             <returns>A read-only collection of records with the specified date of birth.</returns>
         </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
+            <summary>
+            Создает снимок текущего состояния записей.
+            </summary>
+            <returns>Снимок текущего состояния записей.</returns>
+        </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
             Main class for the File Cabinet Application.
