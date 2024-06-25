@@ -162,9 +162,9 @@ namespace FileCabinetApp
         /// Gets the total number of records.
         /// </summary>
         /// <returns>The total number of records.</returns>
-        public int GetStat()
+        public (int Total, int Deleted) GetStat()
         {
-            return this.list.Count;
+            return (this.list.Count, 0); // В памяти записи удаляются полностью.
         }
 
         public FileCabinetServiceSnapshot MakeSnapshot()

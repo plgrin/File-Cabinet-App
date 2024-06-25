@@ -219,9 +219,31 @@ namespace FileCabinetApp
         /// Gets the total number of records in the file system.
         /// </summary>
         /// <returns>The number of records.</returns>
-        public int GetStat()
+        public (int Total, int Deleted) GetStat()
         {
-            return (int)(this.fileStream.Length / RecordSize);
+            int totalCount = 0;
+            int deletedCount = 0;
+            this.fileStream.Seek(0, SeekOrigin.Begin);
+
+            using (BinaryReader reader = new BinaryReader(this.fileStream, Encoding.UTF8, true))
+            {
+                while (this.fileStream.Position < this.fileStream.Length)
+                {
+                    short status = reader.ReadInt16();
+                    if ((status & 0b0100) == 0)
+                    {
+                        totalCount++;
+                    }
+                    else
+                    {
+                        deletedCount++;
+                    }
+
+                    this.fileStream.Seek(RecordSize - sizeof(short), SeekOrigin.Current);
+                }
+            }
+
+            return (totalCount, deletedCount);
         }
 
         /// <summary>

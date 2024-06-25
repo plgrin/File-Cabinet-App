@@ -260,8 +260,9 @@ namespace FileCabinetApp
 
         private static void Stat(string parameters)
         {
-            var recordsCount = fileCabinetService.GetStat();
-            Console.WriteLine($"{recordsCount} record(s).");
+            var (totalCount, deletedCount) = fileCabinetService.GetStat();
+            Console.WriteLine($"{totalCount} record(s).");
+            Console.WriteLine($"{deletedCount} record(s) are deleted.");
         }
 
         private static void List(string parameters)

@@ -46,7 +46,7 @@ namespace FileCabinetApp
         /// Gets the number of records in the file cabinet.
         /// </summary>
         /// <returns>The number of records in the file cabinet.</returns>
-        int GetStat();
+        (int Total, int Deleted) GetStat();
 
         /// <summary>
         /// Finds records by first name.
