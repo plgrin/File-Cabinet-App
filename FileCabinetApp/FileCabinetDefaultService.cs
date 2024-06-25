@@ -8,8 +8,8 @@ namespace FileCabinetApp
 {
     public class FileCabinetDefaultService : FileCabinetService
     {
-        public FileCabinetDefaultService()
-            : base(new DefaultValidator())
+        public FileCabinetDefaultService(IRecordValidator validator)
+       : base(validator)
         {
         }
     }

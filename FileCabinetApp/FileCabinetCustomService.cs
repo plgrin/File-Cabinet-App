@@ -8,8 +8,8 @@ namespace FileCabinetApp
 {
     public class FileCabinetCustomService : FileCabinetService
     {
-        public FileCabinetCustomService()
-            : base(new CustomValidator())
+        public FileCabinetCustomService(IRecordValidator validator)
+        : base(validator)
         {
         }
     }

@@ -54,12 +54,12 @@
 
             if (validationRules.Equals("custom", StringComparison.OrdinalIgnoreCase))
             {
-                fileCabinetService = new FileCabinetCustomService();
+                fileCabinetService = new FileCabinetCustomService(new CustomValidator());
                 Console.WriteLine("Using custom validation rules.");
             }
             else
             {
-                fileCabinetService = new FileCabinetDefaultService();
+                fileCabinetService = new FileCabinetDefaultService(new DefaultValidator());
                 Console.WriteLine("Using default validation rules.");
             }
 
