@@ -44,11 +44,18 @@ namespace FileCabinetGenerator
                 Console.WriteLine($"Records Amount: {recordsAmount}");
                 Console.WriteLine($"Start ID: {startId}");
 
-                var records = RecordGenerator.GenerateRecords(startId, recordsAmount);
-                foreach (var record in records)
+                var records = RecordGenerator.GenerateRecords(recordsAmount, startId);
+
+                if (outputType.Equals("csv", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine($"{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth}, {record.Age}, {record.Salary}, {record.Gender}");
+                    FileCabinetRecordCsvWriter.SaveToCsv(records, output);
                 }
+                else if (outputType.Equals("xml", StringComparison.OrdinalIgnoreCase))
+                {
+                    FileCabinetRecordXmlWriter.SaveToXml(records, output);
+                }
+
+                Console.WriteLine($"{recordsAmount} records were generated starting from ID {startId}.");
             },
             outputTypeOption, outputOption, recordsAmountOption, startIdOption);
 
