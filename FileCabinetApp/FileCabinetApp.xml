@@ -25,23 +25,6 @@
             The parameters for the command.
             </value>
         </member>
-        <member name="T:FileCabinetApp.CommandHandlers.CommandHandler">
-            <summary>
-            Handles commands for the File Cabinet application.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.CommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.CommandHandler"/> class.
-            </summary>
-            <param name="fileCabinetService">The file cabinet service to use.</param>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.CommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
-            <summary>
-            Handles the specified command request.
-            </summary>
-            <param name="request">The command request.</param>
-        </member>
         <member name="T:FileCabinetApp.CommandHandlers.CommandHandlerBase">
             <summary>
             Base class for command handlers.
@@ -52,10 +35,83 @@
             Sets the next handler in the chain.
             </summary>
             <param name="handler">The next handler.</param>
+            <returns>The current handler for chaining.</returns>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.CommandHandlerBase.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <summary>
             Handles the specified command request.
+            </summary>
+            <param name="request">The command request.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.CommandHandlerBase.PrintMissedCommandInfo(System.String)">
+            <summary>
+            Prints a message indicating that the command was not recognized.
+            </summary>
+            <param name="command">The unrecognized command.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.CreateCommandHandler">
+            <summary>
+            Command handler for the "create" command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.CreateCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the "create" command request.
+            </summary>
+            <param name="request">The command request.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.EditCommandHandler">
+            <summary>
+            Command handler for the "edit" command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.EditCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the "edit" command request.
+            </summary>
+            <param name="request">The command request.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.ExitCommandHandler">
+            <summary>
+            Command handler for the "exit" command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ExitCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the "exit" command request.
+            </summary>
+            <param name="request">The command request.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.ExportCommandHandler">
+            <summary>
+            Command handler for the "export" command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ExportCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the "export" command request.
+            </summary>
+            <param name="request">The command request.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.FindCommandHandler">
+            <summary>
+            Command handler for the "find" command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the "find" command request.
+            </summary>
+            <param name="request">The command request.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.HelpCommandHandler">
+            <summary>
+            Command handler for the "help" command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.HelpCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the "help" command request.
             </summary>
             <param name="request">The command request.</param>
         </member>
@@ -69,10 +125,66 @@
             Sets the next handler in the chain.
             </summary>
             <param name="handler">The next handler.</param>
+            <returns>The current handler for chaining.</returns>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.ICommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <summary>
             Handles the specified command request.
+            </summary>
+            <param name="request">The command request.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.ImportCommandHandler">
+            <summary>
+            Command handler for the "import" command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ImportCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the "import" command request.
+            </summary>
+            <param name="request">The command request.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.ListCommandHandler">
+            <summary>
+            Command handler for the "list" command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the "list" command request.
+            </summary>
+            <param name="request">The command request.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.PurgeCommandHandler">
+            <summary>
+            Command handler for the "purge" command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.PurgeCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the "purge" command request.
+            </summary>
+            <param name="request">The command request.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.RemoveCommandHandler">
+            <summary>
+            Command handler for the "remove" command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.RemoveCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the "remove" command request.
+            </summary>
+            <param name="request">The command request.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.StatCommandHandler">
+            <summary>
+            Command handler for the "stat" command.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.StatCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the "stat" command request.
             </summary>
             <param name="request">The command request.</param>
         </member>

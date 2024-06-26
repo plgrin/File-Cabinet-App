@@ -91,21 +91,40 @@ namespace FileCabinetApp
                 const int ParametersIndex = 1;
                 var parameters = inputs.Length > 1 ? inputs[ParametersIndex] : string.Empty;
 
-                var request = new AppCommandRequest
+                commandHandler.Handle(new AppCommandRequest
                 {
                     Command = command,
-                    Parameters = parameters,
-                };
-
-                commandHandler.Handle(request);
+                    Parameters = parameters
+                });
             }
         }
 
         private static ICommandHandler CreateCommandHandlers()
         {
-            var commandHandler = new CommandHandler(fileCabinetService);
-            return commandHandler;
-        }
+            var helpHandler = new HelpCommandHandler();
+            var exitHandler = new ExitCommandHandler();
+            var statHandler = new StatCommandHandler();
+            var createHandler = new CreateCommandHandler();
+            var listHandler = new ListCommandHandler();
+            var editHandler = new EditCommandHandler();
+            var findHandler = new FindCommandHandler();
+            var exportHandler = new ExportCommandHandler();
+            var importHandler = new ImportCommandHandler();
+            var removeHandler = new RemoveCommandHandler();
+            var purgeHandler = new PurgeCommandHandler();
 
+            helpHandler.SetNext(exitHandler)
+                       .SetNext(statHandler)
+                       .SetNext(createHandler)
+                       .SetNext(listHandler)
+                       .SetNext(editHandler)
+                       .SetNext(findHandler)
+                       .SetNext(exportHandler)
+                       .SetNext(importHandler)
+                       .SetNext(removeHandler)
+                       .SetNext(purgeHandler);
+
+            return helpHandler;
+        }
     }
 }

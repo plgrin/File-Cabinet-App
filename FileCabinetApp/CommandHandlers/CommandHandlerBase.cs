@@ -17,9 +17,11 @@ namespace FileCabinetApp.CommandHandlers
         /// Sets the next handler in the chain.
         /// </summary>
         /// <param name="handler">The next handler.</param>
-        public void SetNext(ICommandHandler handler)
+        /// <returns>The current handler for chaining.</returns>
+        public ICommandHandler SetNext(ICommandHandler handler)
         {
             this.nextHandler = handler;
+            return handler;
         }
 
         /// <summary>
@@ -32,6 +34,20 @@ namespace FileCabinetApp.CommandHandlers
             {
                 this.nextHandler.Handle(request);
             }
+            else
+            {
+                this.PrintMissedCommandInfo(request.Command);
+            }
+        }
+
+        /// <summary>
+        /// Prints a message indicating that the command was not recognized.
+        /// </summary>
+        /// <param name="command">The unrecognized command.</param>
+        protected void PrintMissedCommandInfo(string command)
+        {
+            Console.WriteLine($"There is no '{command}' command.");
+            Console.WriteLine();
         }
     }
 }
