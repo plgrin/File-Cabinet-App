@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FileCabinetApp.CommandHandlers;
+using System.ComponentModel.DataAnnotations;
 
 namespace FileCabinetApp
 {
@@ -9,39 +10,11 @@ namespace FileCabinetApp
     {
         private const string DeveloperName = "Grin Polina";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
-        private static IFileCabinetService? fileCabinetService;
+        public static IFileCabinetService? fileCabinetService;
 
-        private static bool isRunning = true;
+        public static bool isRunning = true;
 
-        private static Tuple<string, Action<string>>[] сommands = new Tuple<string, Action<string>>[]
-        {
-            new Tuple<string, Action<string>>("help", PrintHelp),
-            new Tuple<string, Action<string>>("exit", Exit),
-            new Tuple<string, Action<string>>("stat", Stat),
-            new Tuple<string, Action<string>>("create", Create),
-            new Tuple<string, Action<string>>("list", List),
-            new Tuple<string, Action<string>>("edit", Edit),
-            new Tuple<string, Action<string>>("find", Find),
-            new Tuple<string, Action<string>>("export", Export),
-            new Tuple<string, Action<string>>("import", Import),
-            new Tuple<string, Action<string>>("remove", Remove),
-            new Tuple<string, Action<string>>("purge", Purge),
-        };
-
-        private static string[][] helpMessages = new string[][]
-        {
-            new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
-            new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
-            new string[] { "stat", "prints the record statistics", "The 'stat' command prints the record statistics." },
-            new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
-            new string[] { "list", "lists all records", "The 'list' command lists all records." },
-            new string[] { "edit", "edits an existing record", "The 'edit' command edits an existing record." },
-            new string[] { "find", "finds records by a property", "The 'find' command finds records by a property." },
-            new string[] { "export", "exports records to a file", "The 'export' command exports records to a file. Usage: export <format> <filename>." },
-            new string[] { "import", "imports records from a file", "The 'import' command imports records from a file. Usage: import <format> <filename>." },
-            new string[] { "remove", "removes a record by ID", "The 'remove' command removes a record by ID. Usage: remove <id>." },
-            new string[] { "purge", "defragments the data file", "The 'purge' command defragments the data file by removing deleted records." },
-        };
+       
 
         /// <summary>
         /// Main method for the application.
@@ -99,6 +72,8 @@ namespace FileCabinetApp
             Console.WriteLine(HintMessage);
             Console.WriteLine();
 
+            var commandHandler = CreateCommandHandlers();
+
             while (isRunning)
             {
                 Console.Write("> ");
@@ -113,420 +88,24 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                var index = Array.FindIndex(сommands, 0, сommands.Length, i => i.Item1.Equals(command, StringComparison.InvariantCultureIgnoreCase));
-                if (index >= 0)
+                const int ParametersIndex = 1;
+                var parameters = inputs.Length > 1 ? inputs[ParametersIndex] : string.Empty;
+
+                var request = new AppCommandRequest
                 {
-                    const int ParametersIndex = 1;
-                    var parameters = inputs.Length > 1 ? inputs[ParametersIndex] : string.Empty;
-                    сommands[index].Item2(parameters);
-                }
-                else
-                {
-                    PrintMissedCommandInfo(command);
-                }
+                    Command = command,
+                    Parameters = parameters,
+                };
+
+                commandHandler.Handle(request);
             }
         }
 
-        private static void Edit(string parameters)
+        private static ICommandHandler CreateCommandHandlers()
         {
-            if (int.TryParse(parameters, out int id))
-            {
-                try
-                {
-                    Console.Write("First name: ");
-                    var firstName = ReadInput(Converters.StringConverter, Validators.FirstNameValidator);
-
-                    Console.Write("Last name: ");
-                    var lastName = ReadInput(Converters.StringConverter, Validators.LastNameValidator);
-
-                    Console.Write("Date of birth (mm/dd/yyyy): ");
-                    var dateOfBirth = ReadInput(Converters.DateConverter, Validators.DateOfBirthValidator);
-
-                    Console.Write("Age: ");
-                    var age = ReadInput(Converters.ShortConverter, Validators.AgeValidator);
-
-                    Console.Write("Salary: ");
-                    var salary = ReadInput(Converters.DecimalConverter, Validators.SalaryValidator);
-
-                    Console.Write("Gender (M/F): ");
-                    var gender = ReadInput(Converters.CharConverter, Validators.GenderValidator);
-
-                    fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, age, salary, gender);
-                    Console.WriteLine($"Record #{id} is updated.");
-                }
-                catch (ArgumentException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-            else
-            {
-                Console.WriteLine("Invalid record id.");
-            }
+            var commandHandler = new CommandHandler(fileCabinetService);
+            return commandHandler;
         }
 
-        private static void Create(string parameters)
-        {
-            Console.Write("First name: ");
-            var firstName = ReadInput(Converters.StringConverter, Validators.FirstNameValidator);
-
-            Console.Write("Last name: ");
-            var lastName = ReadInput(Converters.StringConverter, Validators.LastNameValidator);
-
-            Console.Write("Date of birth (mm/dd/yyyy): ");
-            var dateOfBirth = ReadInput(Converters.DateConverter, Validators.DateOfBirthValidator);
-
-            Console.Write("Age: ");
-            var age = ReadInput(Converters.ShortConverter, Validators.AgeValidator);
-
-            Console.Write("Salary: ");
-            var salary = ReadInput(Converters.DecimalConverter, Validators.SalaryValidator);
-
-            Console.Write("Gender (M/F): ");
-            var gender = ReadInput(Converters.CharConverter, Validators.GenderValidator);
-
-            int recordId = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, salary, gender);
-            Console.WriteLine($"Record #{recordId} is created.");
-        }
-
-        private static void Find(string parameters)
-        {
-            var inputs = parameters.Split(' ', 2);
-            if (inputs.Length < 2)
-            {
-                Console.WriteLine("Invalid parameters. Usage: find <property> <value>");
-                return;
-            }
-
-            var property = inputs[0];
-            var value = inputs[1].Trim('\"');
-
-            if (property.Equals("firstname", StringComparison.OrdinalIgnoreCase))
-            {
-                var records = fileCabinetService.FindByFirstName(value);
-                foreach (var record in records)
-                {
-                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
-                }
-            }
-            else if (property.Equals("lastname", StringComparison.OrdinalIgnoreCase))
-            {
-                var records = fileCabinetService.FindByLastName(value);
-                foreach (var record in records)
-                {
-                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
-                }
-            }
-            else if (property.Equals("dateofbirth", StringComparison.OrdinalIgnoreCase))
-            {
-                var records = fileCabinetService.FindByDateOfBirth(value);
-                foreach (var record in records)
-                {
-                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Search by {property} is not supported.");
-            }
-        }
-
-        private static void PrintHelp(string parameters)
-        {
-            if (!string.IsNullOrEmpty(parameters))
-            {
-                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[0], parameters, StringComparison.OrdinalIgnoreCase));
-                if (index >= 0)
-                {
-                    Console.WriteLine(helpMessages[index][2]);
-                }
-                else
-                {
-                    Console.WriteLine($"There is no explanation for '{parameters}' command.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Available commands:");
-
-                foreach (var helpMessage in helpMessages)
-                {
-                    Console.WriteLine("\t{0}\t- {1}", helpMessage[0], helpMessage[1]);
-                }
-            }
-
-            Console.WriteLine();
-        }
-
-        private static void Stat(string parameters)
-        {
-            var (totalCount, deletedCount) = fileCabinetService.GetStat();
-            Console.WriteLine($"{totalCount} record(s).");
-            Console.WriteLine($"{deletedCount} record(s) are deleted.");
-        }
-
-        private static void List(string parameters)
-        {
-            var records = fileCabinetService.GetRecords();
-            foreach (var record in records)
-            {
-                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
-            }
-        }
-
-        private static void PrintMissedCommandInfo(string command)
-        {
-            Console.WriteLine($"There is no '{command}' command.");
-            Console.WriteLine();
-        }
-
-        private static void Exit(string parameters)
-        {
-            Console.WriteLine("Exiting an application...");
-            isRunning = false;
-        }
-
-        private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
-        {
-            do
-            {
-                T value;
-
-                var input = Console.ReadLine();
-                var conversionResult = converter(input);
-
-                if (!conversionResult.Item1)
-                {
-                    Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
-                    continue;
-                }
-
-                value = conversionResult.Item3;
-
-                var validationResult = validator(value);
-                if (!validationResult.Item1)
-                {
-                    Console.WriteLine($"Validation failed: {validationResult.Item2}. Please, correct your input.");
-                    continue;
-                }
-
-                return value;
-            }
-            while (true);
-        }
-
-        private static void Export(string parameters)
-        {
-            var inputs = parameters.Split(' ', 2);
-            if (inputs.Length < 2)
-            {
-                Console.WriteLine("Invalid parameters. Usage: export <format> <filename>");
-                return;
-            }
-
-            var format = inputs[0];
-            var path = inputs[1];
-
-            if (format.Equals("csv", StringComparison.InvariantCultureIgnoreCase))
-            {
-                ExportCsv(path);
-            }
-            else if (format.Equals("xml", StringComparison.InvariantCultureIgnoreCase))
-            {
-                ExportXml(path);
-            }
-            else
-            {
-                Console.WriteLine($"Export in {format} format is not supported.");
-            }
-        }
-
-        private static void ExportCsv(string path)
-        {
-            if (File.Exists(path))
-            {
-                Console.Write($"File is exist - rewrite {path}? [Y/n] ");
-                var answer = Console.ReadLine();
-                if (answer.Equals("n", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return;
-                }
-            }
-
-            try
-            {
-                using var writer = new StreamWriter(path);
-                var snapshot = fileCabinetService.MakeSnapshot();
-                snapshot.SaveToCsv(writer);
-                Console.WriteLine($"All records are exported to file {path}.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Export failed: {ex.Message}");
-            }
-        }
-
-        private static void ExportXml(string path)
-        {
-            if (File.Exists(path))
-            {
-                Console.Write($"File is exist - rewrite {path}? [Y/n] ");
-                var answer = Console.ReadLine();
-                if (answer.Equals("n", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return;
-                }
-            }
-
-            try
-            {
-                using var writer = new StreamWriter(path);
-                var snapshot = fileCabinetService.MakeSnapshot();
-                snapshot.SaveToXml(writer);
-                Console.WriteLine($"All records are exported to file {path}.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Export failed: {ex.Message}");
-            }
-        }
-
-        private static void Import(string parameters)
-        {
-            var inputs = parameters.Split(' ', 2);
-            if (inputs.Length < 2)
-            {
-                Console.WriteLine("Invalid parameters. Usage: import <format> <filename>");
-                return;
-            }
-
-            var format = inputs[0];
-            var path = inputs[1];
-
-            if (format.Equals("csv", StringComparison.InvariantCultureIgnoreCase))
-            {
-                ImportCsv(path);
-            }
-            else if (format.Equals("xml", StringComparison.InvariantCultureIgnoreCase))
-            {
-                ImportXml(path);
-            }
-            else
-            {
-                Console.WriteLine($"Import in {format} format is not supported.");
-            }
-        }
-
-        private static void ImportCsv(string path)
-        {
-            if (!File.Exists(path))
-            {
-                Console.WriteLine($"Import error: file {path} does not exist.");
-                return;
-            }
-
-            try
-            {
-                using var reader = new StreamReader(path);
-                var csvReader = new FileCabinetRecordCsvReader(reader);
-                var records = csvReader.ReadAll();
-
-                int importedCount = 0;
-                foreach (var record in records)
-                {
-                    try
-                    {
-                        fileCabinetService.CreateRecord(record.FirstName, record.LastName, record.DateOfBirth, record.Age, record.Salary, record.Gender);
-                        importedCount++;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error importing record with ID {record.Id}: {ex.Message}");
-                    }
-                }
-
-                Console.WriteLine($"{importedCount} records were imported from {path}.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Import failed: {ex.Message}");
-            }
-        }
-
-        private static void ImportXml(string path)
-        {
-            if (!File.Exists(path))
-            {
-                Console.WriteLine($"Import error: file {path} does not exist.");
-                return;
-            }
-
-            try
-            {
-                using var reader = new StreamReader(path);
-                var xmlReader = new FileCabinetRecordXmlReader();
-                var records = xmlReader.ReadAll(reader);
-
-                int importedCount = 0;
-                foreach (var record in records)
-                {
-                    try
-                    {
-                        fileCabinetService.CreateRecord(
-                            record.FirstName,
-                            record.LastName,
-                            record.DateOfBirth,
-                            record.Age,
-                            record.Salary,
-                            record.Gender
-                        );
-                        importedCount++;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error importing record with ID {record.Id}: {ex.Message}");
-                    }
-                }
-
-                Console.WriteLine($"{importedCount} records were imported from {path}.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Import failed: {ex.Message}");
-            }
-        }
-
-        private static void Remove(string parameters)
-        {
-            if (int.TryParse(parameters, out int id))
-            {
-                try
-                {
-                    fileCabinetService.RemoveRecord(id);
-                    Console.WriteLine($"Record #{id} is removed.");
-                }
-                catch (ArgumentException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-            else
-            {
-                Console.WriteLine("Invalid record id.");
-            }
-        }
-
-        private static void Purge(string parameters)
-        {
-            if (fileCabinetService is FileCabinetFilesystemService)
-            {
-                int purgedCount = fileCabinetService.Purge();
-                Console.WriteLine($"Data file processing is completed: {purgedCount} of {fileCabinetService.GetStat()} records were purged.");
-            }
-            else
-            {
-                Console.WriteLine("Purge command is only applicable for file storage.");
-            }
-        }
     }
 }
