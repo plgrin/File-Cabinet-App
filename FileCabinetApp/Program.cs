@@ -10,11 +10,9 @@ namespace FileCabinetApp
     {
         private const string DeveloperName = "Grin Polina";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
-        public static IFileCabinetService? fileCabinetService;
+        private static IFileCabinetService? fileCabinetService;
 
         public static bool isRunning = true;
-
-       
 
         /// <summary>
         /// Main method for the application.
@@ -103,15 +101,15 @@ namespace FileCabinetApp
         {
             var helpHandler = new HelpCommandHandler();
             var exitHandler = new ExitCommandHandler();
-            var statHandler = new StatCommandHandler();
-            var createHandler = new CreateCommandHandler();
-            var listHandler = new ListCommandHandler();
-            var editHandler = new EditCommandHandler();
-            var findHandler = new FindCommandHandler();
-            var exportHandler = new ExportCommandHandler();
-            var importHandler = new ImportCommandHandler();
-            var removeHandler = new RemoveCommandHandler();
-            var purgeHandler = new PurgeCommandHandler();
+            var statHandler = new StatCommandHandler(fileCabinetService);
+            var createHandler = new CreateCommandHandler(fileCabinetService);
+            var listHandler = new ListCommandHandler(fileCabinetService);
+            var editHandler = new EditCommandHandler(fileCabinetService);
+            var findHandler = new FindCommandHandler(fileCabinetService);
+            var exportHandler = new ExportCommandHandler(fileCabinetService);
+            var importHandler = new ImportCommandHandler(fileCabinetService);
+            var removeHandler = new RemoveCommandHandler(fileCabinetService);
+            var purgeHandler = new PurgeCommandHandler(fileCabinetService);
 
             helpHandler.SetNext(exitHandler)
                        .SetNext(statHandler)

@@ -12,6 +12,16 @@ namespace FileCabinetApp.CommandHandlers
     public class RemoveCommandHandler : CommandHandlerBase
     {
         private const string RemoveCommandText = "remove";
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RemoveCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">The file cabinet service to use for removing records.</param>
+        public RemoveCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
 
         /// <summary>
         /// Handles the "remove" command request.
@@ -35,7 +45,7 @@ namespace FileCabinetApp.CommandHandlers
             {
                 try
                 {
-                    Program.fileCabinetService.RemoveRecord(id);
+                    this.service.RemoveRecord(id);
                     Console.WriteLine($"Record #{id} is removed.");
                 }
                 catch (ArgumentException ex)

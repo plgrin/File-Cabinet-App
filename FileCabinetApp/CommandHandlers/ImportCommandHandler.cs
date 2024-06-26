@@ -12,7 +12,16 @@ namespace FileCabinetApp.CommandHandlers
     public class ImportCommandHandler : CommandHandlerBase
     {
         private const string ImportCommandText = "import";
+        private readonly IFileCabinetService service;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImportCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">The file cabinet service to use for importing records.</param>
+        public ImportCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
         /// <summary>
         /// Handles the "import" command request.
         /// </summary>
@@ -74,7 +83,7 @@ namespace FileCabinetApp.CommandHandlers
                 {
                     try
                     {
-                        Program.fileCabinetService.CreateRecord(record.FirstName, record.LastName, record.DateOfBirth, record.Age, record.Salary, record.Gender);
+                        this.service.CreateRecord(record.FirstName, record.LastName, record.DateOfBirth, record.Age, record.Salary, record.Gender);
                         importedCount++;
                     }
                     catch (Exception ex)
@@ -110,7 +119,7 @@ namespace FileCabinetApp.CommandHandlers
                 {
                     try
                     {
-                        Program.fileCabinetService.CreateRecord(
+                        this.service.CreateRecord(
                             record.FirstName,
                             record.LastName,
                             record.DateOfBirth,

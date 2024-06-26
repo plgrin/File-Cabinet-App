@@ -12,7 +12,16 @@ namespace FileCabinetApp.CommandHandlers
     public class ListCommandHandler : CommandHandlerBase
     {
         private const string ListCommandText = "list";
+        private readonly IFileCabinetService service;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">The file cabinet service to use for listing records.</param>
+        public ListCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
         /// <summary>
         /// Handles the "list" command request.
         /// </summary>
@@ -31,7 +40,7 @@ namespace FileCabinetApp.CommandHandlers
 
         private void List(string parameters)
         {
-            var records = Program.fileCabinetService.GetRecords();
+            var records = this.service.GetRecords();
             foreach (var record in records)
             {
                 Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");

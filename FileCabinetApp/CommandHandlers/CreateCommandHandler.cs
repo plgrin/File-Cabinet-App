@@ -12,6 +12,16 @@ namespace FileCabinetApp.CommandHandlers
     public class CreateCommandHandler : CommandHandlerBase
     {
         private const string CreateCommandText = "create";
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">The file cabinet service to use for creating records.</param>
+        public CreateCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
 
         /// <summary>
         /// Handles the "create" command request.
@@ -49,7 +59,7 @@ namespace FileCabinetApp.CommandHandlers
             Console.Write("Gender (M/F): ");
             var gender = this.ReadInput(Converters.CharConverter, Validators.GenderValidator);
 
-            int recordId = Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, salary, gender);
+            int recordId = this.service.CreateRecord(firstName, lastName, dateOfBirth, age, salary, gender);
             Console.WriteLine($"Record #{recordId} is created.");
         }
 

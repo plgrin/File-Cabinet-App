@@ -12,6 +12,16 @@ namespace FileCabinetApp.CommandHandlers
     public class FindCommandHandler : CommandHandlerBase
     {
         private const string FindCommandText = "find";
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">The file cabinet service to use for finding records.</param>
+        public FindCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
 
         /// <summary>
         /// Handles the "find" command request.
@@ -43,7 +53,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (property.Equals("firstname", StringComparison.OrdinalIgnoreCase))
             {
-                var records = Program.fileCabinetService.FindByFirstName(value);
+                var records = this.service.FindByFirstName(value);
                 foreach (var record in records)
                 {
                     Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
@@ -51,7 +61,7 @@ namespace FileCabinetApp.CommandHandlers
             }
             else if (property.Equals("lastname", StringComparison.OrdinalIgnoreCase))
             {
-                var records = Program.fileCabinetService.FindByLastName(value);
+                var records = this.service.FindByLastName(value);
                 foreach (var record in records)
                 {
                     Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
@@ -59,7 +69,7 @@ namespace FileCabinetApp.CommandHandlers
             }
             else if (property.Equals("dateofbirth", StringComparison.OrdinalIgnoreCase))
             {
-                var records = Program.fileCabinetService.FindByDateOfBirth(value);
+                var records = this.service.FindByDateOfBirth(value);
                 foreach (var record in records)
                 {
                     Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");

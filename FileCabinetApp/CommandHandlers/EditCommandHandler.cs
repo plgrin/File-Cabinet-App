@@ -12,6 +12,16 @@ namespace FileCabinetApp.CommandHandlers
     public class EditCommandHandler : CommandHandlerBase
     {
         private const string EditCommandText = "edit";
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">The file cabinet service to use for editing records.</param>
+        public EditCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
 
         /// <summary>
         /// Handles the "edit" command request.
@@ -53,7 +63,7 @@ namespace FileCabinetApp.CommandHandlers
                     Console.Write("Gender (M/F): ");
                     var gender = this.ReadInput(Converters.CharConverter, Validators.GenderValidator);
 
-                    Program.fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, age, salary, gender);
+                    this.service.EditRecord(id, firstName, lastName, dateOfBirth, age, salary, gender);
                     Console.WriteLine($"Record #{id} is updated.");
                 }
                 catch (ArgumentException ex)

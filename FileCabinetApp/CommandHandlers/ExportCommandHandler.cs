@@ -12,6 +12,16 @@ namespace FileCabinetApp.CommandHandlers
     public class ExportCommandHandler : CommandHandlerBase
     {
         private const string ExportCommandText = "export";
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExportCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">The file cabinet service to use for exporting records.</param>
+        public ExportCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
 
         /// <summary>
         /// Handles the "export" command request.
@@ -70,7 +80,7 @@ namespace FileCabinetApp.CommandHandlers
             try
             {
                 using var writer = new StreamWriter(path);
-                var snapshot = Program.fileCabinetService.MakeSnapshot();
+                var snapshot = this.service.MakeSnapshot();
                 snapshot.SaveToCsv(writer);
                 Console.WriteLine($"All records are exported to file {path}.");
             }
@@ -95,7 +105,7 @@ namespace FileCabinetApp.CommandHandlers
             try
             {
                 using var writer = new StreamWriter(path);
-                var snapshot = Program.fileCabinetService.MakeSnapshot();
+                var snapshot = this.service.MakeSnapshot();
                 snapshot.SaveToXml(writer);
                 Console.WriteLine($"All records are exported to file {path}.");
             }
