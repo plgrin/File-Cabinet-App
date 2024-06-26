@@ -12,14 +12,16 @@ namespace FileCabinetApp.CommandHandlers
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
         private const string FindCommandText = "find";
+        private readonly IRecordPrinter printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="service">The service to manage file cabinet records.</param>
-        public FindCommandHandler(IFileCabinetService service)
+        public FindCommandHandler(IFileCabinetService service, IRecordPrinter printer)
            : base(service)
         {
+            this.printer = printer;
         }
 
         /// <summary>

@@ -12,14 +12,16 @@ namespace FileCabinetApp.CommandHandlers
     public class ListCommandHandler : ServiceCommandHandlerBase
     {
         private const string ListCommandText = "list";
+        private readonly IRecordPrinter printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
         /// </summary>
         /// <param name="service">The service to manage file cabinet records.</param>
-        public ListCommandHandler(IFileCabinetService service)
+        public ListCommandHandler(IFileCabinetService service, IRecordPrinter printer)
            : base(service)
         {
+            this.printer = printer;
         }
 
         /// <summary>
@@ -28,22 +30,14 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="request">The command request.</param>
         public override void Handle(AppCommandRequest request)
         {
-            if (request.Command.ToLower() == ListCommandText)
+            if (request.Command.Equals("list", StringComparison.OrdinalIgnoreCase))
             {
-                this.List(request.Parameters);
+                var records = this.service.GetRecords();
+                this.printer.Print(records);
             }
             else
             {
                 base.Handle(request);
-            }
-        }
-
-        private void List(string parameters)
-        {
-            var records = this.service.GetRecords();
-            foreach (var record in records)
-            {
-                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
             }
         }
     }
