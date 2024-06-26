@@ -25,9 +25,15 @@ namespace FileCabinetApp
             string validationRulesType = "default";
             string storageType = "memory";
             bool useStopwatch = false;
+            bool useLogger = false;
 
             foreach (string arg in args)
             {
+                if (arg.StartsWith("--use-logger", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    useLogger = true;
+                }
+
                 if (arg.StartsWith("--validation-rules=", StringComparison.InvariantCultureIgnoreCase))
                 {
                     validationRulesType = arg.Substring("--validation-rules=".Length);
@@ -44,7 +50,8 @@ namespace FileCabinetApp
                 {
                     storageType = arg.Substring(2);
                 }
-                else if (arg.Equals("--use-stopwatch", StringComparison.InvariantCultureIgnoreCase))
+
+                if (arg.Equals("--use-stopwatch", StringComparison.InvariantCultureIgnoreCase))
                 {
                     useStopwatch = true;
                 }
@@ -86,6 +93,13 @@ namespace FileCabinetApp
             {
                 fileCabinetService = new ServiceMeter(fileCabinetService);
                 Console.WriteLine("Using stopwatch for measuring method execution duration.");
+            }
+
+            if (useLogger)
+            {
+                var writer = new StreamWriter("log.txt", true) { AutoFlush = true };
+                fileCabinetService = new ServiceLogger(fileCabinetService, writer);
+                Console.WriteLine("Logging enabled.");
             }
 
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
