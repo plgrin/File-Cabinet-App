@@ -46,14 +46,29 @@ namespace FileCabinetApp
             IRecordValidator validator;
             if (validationRules.Equals("custom", StringComparison.OrdinalIgnoreCase))
             {
-                validator = new CustomValidator();
+                validator = new ValidatorBuilder()
+                                .ValidateFirstName(3, 50)
+                                .ValidateLastName(3, 50)
+                                .ValidateDateOfBirth(new DateTime(1960, 1, 1), DateTime.Now.AddYears(-18))
+                                .ValidateAge(18, 100)
+                                .ValidateSalary(1000, 1000000)
+                                .ValidateGender(new[] { 'M', 'F', 'N', 'B' })
+                                .Create();
                 Console.WriteLine("Using custom validation rules.");
             }
             else
             {
-                validator = new DefaultValidator();
+                validator = new ValidatorBuilder()
+                                .ValidateFirstName(2, 60)
+                                .ValidateLastName(2, 60)
+                                .ValidateDateOfBirth(new DateTime(1950, 1, 1), DateTime.Now)
+                                .ValidateAge(0, 120)
+                                .ValidateSalary(0, 1000000)
+                                .ValidateGender(new char[] { 'M', 'F' })
+                                .Create();
                 Console.WriteLine("Using default validation rules.");
             }
+
 
             if (storageType.Equals("file", StringComparison.OrdinalIgnoreCase))
             {

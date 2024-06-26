@@ -636,25 +636,5 @@
             <param name="salary">The salary to validate.</param>
             <param name="gender">The gender to validate.</param>
         </member>
-        <member name="T:FileCabinetApp.Validators.CustomValidator">
-            <summary>
-            Custom validator class that uses specific validation rules.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.Validators.CustomValidator.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.CustomValidator"/> class.
-            </summary>
-        </member>
-        <member name="T:FileCabinetApp.Validators.DefaultValidator">
-            <summary>
-            Default validator class that uses default validation rules.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.Validators.DefaultValidator.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.DefaultValidator"/> class.
-            </summary>
-        </member>
     </members>
 </doc>
