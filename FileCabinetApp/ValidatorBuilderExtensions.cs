@@ -3,32 +3,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FileCabinetApp.Validators;
+using Microsoft.Extensions.Configuration;
 
 namespace FileCabinetApp
 {
     public static class ValidatorBuilderExtensions
     {
-        public static IRecordValidator CreateDefault(this ValidatorBuilder builder)
+        public static IRecordValidator CreateDefault(this ValidatorBuilder builder, IConfigurationSection section)
         {
+            var firstNameConfig = section.GetSection("firstName");
+            var lastNameConfig = section.GetSection("lastName");
+            var dateOfBirthConfig = section.GetSection("dateOfBirth");
+            var ageConfig = section.GetSection("age");
+            var salaryConfig = section.GetSection("salary");
+            var genderConfig = section.GetSection("gender");
+
             return builder
-                .ValidateFirstName(2, 60)
-                .ValidateLastName(2, 60)
-                .ValidateDateOfBirth(new DateTime(1950, 1, 1), DateTime.Now)
-                .ValidateAge(0, 120)
-                .ValidateSalary(0, 1000000)
-                .ValidateGender(new char[] { 'M', 'F' })
+                .ValidateFirstName(firstNameConfig.GetValue<int>("min"), firstNameConfig.GetValue<int>("max"))
+                .ValidateLastName(lastNameConfig.GetValue<int>("min"), lastNameConfig.GetValue<int>("max"))
+                .ValidateDateOfBirth(dateOfBirthConfig.GetValue<DateTime>("from"), dateOfBirthConfig.GetValue<DateTime>("to"))
+                .ValidateAge(ageConfig.GetValue<short>("min"), ageConfig.GetValue<short>("max"))
+                .ValidateSalary(salaryConfig.GetValue<decimal>("min"), salaryConfig.GetValue<decimal>("max"))
+                .ValidateGender(genderConfig.Get<string[]>().SelectMany(s => s.ToCharArray()).ToArray())
                 .Create();
         }
 
-        public static IRecordValidator CreateCustom(this ValidatorBuilder builder)
+        public static IRecordValidator CreateCustom(this ValidatorBuilder builder, IConfigurationSection section)
         {
+            var firstNameConfig = section.GetSection("firstName");
+            var lastNameConfig = section.GetSection("lastName");
+            var dateOfBirthConfig = section.GetSection("dateOfBirth");
+            var ageConfig = section.GetSection("age");
+            var salaryConfig = section.GetSection("salary");
+            var genderConfig = section.GetSection("gender");
+
             return builder
-                .ValidateFirstName(3, 50)
-                .ValidateLastName(3, 50)
-                .ValidateDateOfBirth(new DateTime(1960, 1, 1), DateTime.Now.AddYears(-18))
-                .ValidateAge(18, 100)
-                .ValidateSalary(1000, 1000000)
-                .ValidateGender(new[] { 'M', 'F', 'N', 'B' })
+                .ValidateFirstName(firstNameConfig.GetValue<int>("min"), firstNameConfig.GetValue<int>("max"))
+                .ValidateLastName(lastNameConfig.GetValue<int>("min"), lastNameConfig.GetValue<int>("max"))
+                .ValidateDateOfBirth(dateOfBirthConfig.GetValue<DateTime>("from"), dateOfBirthConfig.GetValue<DateTime>("to"))
+                .ValidateAge(ageConfig.GetValue<short>("min"), ageConfig.GetValue<short>("max"))
+                .ValidateSalary(salaryConfig.GetValue<decimal>("min"), salaryConfig.GetValue<decimal>("max"))
+                .ValidateGender(genderConfig.Get<string[]>().SelectMany(s => s.ToCharArray()).ToArray())
                 .Create();
         }
     }

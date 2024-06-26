@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using FileCabinetApp.CommandHandlers;
 using FileCabinetApp.Validators;
+using Microsoft.Extensions.Configuration;
 
 namespace FileCabinetApp
 {
@@ -21,17 +22,17 @@ namespace FileCabinetApp
         /// <param name="args">Command-line arguments.</param>
         public static void Main(string[] args)
         {
-            string validationRules = "default";
+            string validationRulesType = "default";
             string storageType = "memory";
             foreach (string arg in args)
             {
                 if (arg.StartsWith("--validation-rules=", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    validationRules = arg.Substring("--validation-rules=".Length);
+                    validationRulesType = arg.Substring("--validation-rules=".Length);
                 }
                 else if (arg.StartsWith("-v", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    validationRules = arg.Substring(2);
+                    validationRulesType = arg.Substring(2);
                 }
                 else if (arg.StartsWith("--storage=", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -43,16 +44,23 @@ namespace FileCabinetApp
                 }
             }
 
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("validation-rules.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            IConfigurationSection validationRules = configuration.GetSection(validationRulesType);
+
             IRecordValidator validator;
             var builder = new ValidatorBuilder();
-            if (validationRules.Equals("custom", StringComparison.OrdinalIgnoreCase))
+            if (validationRulesType.Equals("custom", StringComparison.OrdinalIgnoreCase))
             {
-                validator = builder.CreateCustom();
+                validator = builder.CreateCustom(validationRules);
                 Console.WriteLine("Using custom validation rules.");
             }
             else
             {
-                validator = builder.CreateDefault();
+                validator = builder.CreateDefault(validationRules);
                 Console.WriteLine("Using default validation rules.");
             }
 
