@@ -99,15 +99,13 @@ namespace FileCabinetApp
 
         private static ICommandHandler CreateCommandHandlers()
         {
-            var recordPrinter = new DefaultRecordPrinter();
-
             var helpHandler = new HelpCommandHandler();
             var exitHandler = new ExitCommandHandler(SetIsRunning);
             var statHandler = new StatCommandHandler(fileCabinetService);
             var createHandler = new CreateCommandHandler(fileCabinetService);
-            var listHandler = new ListCommandHandler(fileCabinetService, recordPrinter);
+            var listHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
             var editHandler = new EditCommandHandler(fileCabinetService);
-            var findHandler = new FindCommandHandler(fileCabinetService, recordPrinter);
+            var findHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
             var exportHandler = new ExportCommandHandler(fileCabinetService);
             var importHandler = new ImportCommandHandler(fileCabinetService);
             var removeHandler = new RemoveCommandHandler(fileCabinetService);
@@ -116,9 +114,9 @@ namespace FileCabinetApp
             helpHandler.SetNext(exitHandler)
                        .SetNext(statHandler)
                        .SetNext(createHandler)
-                       .SetNext(listHandler)
-                       .SetNext(editHandler)
                        .SetNext(findHandler)
+                       .SetNext(editHandler)
+                       .SetNext(listHandler)
                        .SetNext(exportHandler)
                        .SetNext(importHandler)
                        .SetNext(removeHandler)
@@ -130,6 +128,14 @@ namespace FileCabinetApp
         private static void SetIsRunning(bool running)
         {
             isRunning = running;
+        }
+
+        public static void DefaultRecordPrint(IEnumerable<FileCabinetRecord> records)
+        {
+            foreach (var record in records)
+            {
+                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,14 +13,13 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
-        private const string FindCommandText = "find";
-        private readonly IRecordPrinter printer;
+        private readonly Action<IEnumerable<FileCabinetRecord>> printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="service">The service to manage file cabinet records.</param>
-        public FindCommandHandler(IFileCabinetService service, IRecordPrinter printer)
+        public FindCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> printer)
            : base(service)
         {
             this.printer = printer;
@@ -30,55 +31,32 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="request">The command request.</param>
         public override void Handle(AppCommandRequest request)
         {
-            if (request.Command.ToLower() == FindCommandText)
-            {
-                this.Find(request.Parameters);
-            }
-            else
-            {
-                base.Handle(request);
-            }
-        }
+            var parameters = request.Parameters.Split(' ', 2);
 
-        private void Find(string parameters)
-        {
-            var inputs = parameters.Split(' ', 2);
-            if (inputs.Length < 2)
+            if (parameters.Length < 2)
             {
                 Console.WriteLine("Invalid parameters. Usage: find <property> <value>");
                 return;
             }
 
-            var property = inputs[0];
-            var value = inputs[1].Trim('\"');
+            var property = parameters[0].ToLower();
+            var value = parameters[1];
 
-            if (property.Equals("firstname", StringComparison.OrdinalIgnoreCase))
+            IEnumerable<FileCabinetRecord> records = property switch
             {
-                var records = this.service.FindByFirstName(value);
-                foreach (var record in records)
-                {
-                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
-                }
-            }
-            else if (property.Equals("lastname", StringComparison.OrdinalIgnoreCase))
+                "firstname" => this.service.FindByFirstName(value),
+                "lastname" => this.service.FindByLastName(value),
+                "dateofbirth" => this.service.FindByDateOfBirth(value),
+                _ => null
+            };
+
+            if (records == null)
             {
-                var records = this.service.FindByLastName(value);
-                foreach (var record in records)
-                {
-                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
-                }
-            }
-            else if (property.Equals("dateofbirth", StringComparison.OrdinalIgnoreCase))
-            {
-                var records = this.service.FindByDateOfBirth(value);
-                foreach (var record in records)
-                {
-                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
-                }
+                Console.WriteLine($"Search by {property} is not supported.");
             }
             else
             {
-                Console.WriteLine($"Search by {property} is not supported.");
+                this.printer(records);
             }
         }
     }
