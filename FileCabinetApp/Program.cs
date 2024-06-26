@@ -24,6 +24,8 @@ namespace FileCabinetApp
         {
             string validationRulesType = "default";
             string storageType = "memory";
+            bool useStopwatch = false;
+
             foreach (string arg in args)
             {
                 if (arg.StartsWith("--validation-rules=", StringComparison.InvariantCultureIgnoreCase))
@@ -41,6 +43,10 @@ namespace FileCabinetApp
                 else if (arg.StartsWith("-s", StringComparison.InvariantCultureIgnoreCase))
                 {
                     storageType = arg.Substring(2);
+                }
+                else if (arg.Equals("--use-stopwatch", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    useStopwatch = true;
                 }
             }
 
@@ -74,6 +80,12 @@ namespace FileCabinetApp
             {
                 fileCabinetService = new FileCabinetMemoryService(validator);
                 Console.WriteLine("Using memory storage.");
+            }
+
+            if (useStopwatch)
+            {
+                fileCabinetService = new ServiceMeter(fileCabinetService);
+                Console.WriteLine("Using stopwatch for measuring method execution duration.");
             }
 
             Console.WriteLine($"File Cabinet Application, developed by {DeveloperName}");
