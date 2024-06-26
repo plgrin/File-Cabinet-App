@@ -614,52 +614,5 @@
             </summary>
             <param name="args">Command-line arguments.</param>
         </member>
-        <member name="T:FileCabinetApp.Validators">
-            <summary>
-            Provides methods for validating various data types.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.Validators.FirstNameValidator(System.String)">
-            <summary>
-            Validates a first name.
-            </summary>
-            <param name="firstName">The first name to validate.</param>
-            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
-        </member>
-        <member name="M:FileCabinetApp.Validators.LastNameValidator(System.String)">
-            <summary>
-            Validates a last name.
-            </summary>
-            <param name="lastName">The last name to validate.</param>
-            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
-        </member>
-        <member name="M:FileCabinetApp.Validators.DateOfBirthValidator(System.DateTime)">
-            <summary>
-            Validates a date of birth.
-            </summary>
-            <param name="dateOfBirth">The date of birth to validate.</param>
-            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
-        </member>
-        <member name="M:FileCabinetApp.Validators.AgeValidator(System.Int16)">
-            <summary>
-            Validates an age.
-            </summary>
-            <param name="age">The age to validate.</param>
-            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
-        </member>
-        <member name="M:FileCabinetApp.Validators.SalaryValidator(System.Decimal)">
-            <summary>
-            Validates a salary.
-            </summary>
-            <param name="salary">The salary to validate.</param>
-            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
-        </member>
-        <member name="M:FileCabinetApp.Validators.GenderValidator(System.Char)">
-            <summary>
-            Validates a gender.
-            </summary>
-            <param name="gender">The gender to validate.</param>
-            <returns>A tuple containing a boolean indicating success and an error message if applicable.</returns>
-        </member>
     </members>
 </doc>

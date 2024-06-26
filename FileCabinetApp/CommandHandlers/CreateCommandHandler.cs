@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -11,7 +12,6 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class CreateCommandHandler : ServiceCommandHandlerBase
     {
-        private const string CreateCommandText = "create";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
@@ -28,7 +28,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="request">The command request.</param>
         public override void Handle(AppCommandRequest request)
         {
-            if (request.Command.ToLower() == CreateCommandText)
+            if (request.Command.Equals("create", StringComparison.InvariantCultureIgnoreCase))
             {
                 this.Create(request.Parameters);
             }
@@ -41,28 +41,28 @@ namespace FileCabinetApp.CommandHandlers
         private void Create(string parameters)
         {
             Console.Write("First name: ");
-            var firstName = this.ReadInput(Converters.StringConverter, Validators.FirstNameValidator);
+            var firstName = this.ReadInput(Converters.StringConverter, new DefaultFirstNameValidator().Validate);
 
             Console.Write("Last name: ");
-            var lastName = this.ReadInput(Converters.StringConverter, Validators.LastNameValidator);
+            var lastName = this.ReadInput(Converters.StringConverter, new DefaultLastNameValidator().Validate);
 
             Console.Write("Date of birth (mm/dd/yyyy): ");
-            var dateOfBirth = this.ReadInput(Converters.DateConverter, Validators.DateOfBirthValidator);
+            var dateOfBirth = this.ReadInput(Converters.DateConverter, new DefaultDateOfBirthValidator().Validate);
 
             Console.Write("Age: ");
-            var age = this.ReadInput(Converters.ShortConverter, Validators.AgeValidator);
+            var age = this.ReadInput(Converters.ShortConverter, new DefaultAgeValidator().Validate);
 
             Console.Write("Salary: ");
-            var salary = this.ReadInput(Converters.DecimalConverter, Validators.SalaryValidator);
+            var salary = this.ReadInput(Converters.DecimalConverter, new DefaultSalaryValidator().Validate);
 
             Console.Write("Gender (M/F): ");
-            var gender = this.ReadInput(Converters.CharConverter, Validators.GenderValidator);
+            var gender = this.ReadInput(Converters.CharConverter, new DefaultGenderValidator().Validate);
 
             int recordId = this.service.CreateRecord(firstName, lastName, dateOfBirth, age, salary, gender);
             Console.WriteLine($"Record #{recordId} is created.");
         }
 
-        private T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
+        private T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Action<T> validator)
         {
             do
             {
@@ -79,10 +79,13 @@ namespace FileCabinetApp.CommandHandlers
 
                 value = conversionResult.Item3;
 
-                var validationResult = validator(value);
-                if (!validationResult.Item1)
+                try
                 {
-                    Console.WriteLine($"Validation failed: {validationResult.Item2}. Please, correct your input.");
+                    validator(value);
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Validation failed: {ex.Message}. Please, correct your input.");
                     continue;
                 }
 
