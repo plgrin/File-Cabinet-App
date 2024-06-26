@@ -1,5 +1,6 @@
-﻿using FileCabinetApp.CommandHandlers;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
 {
@@ -10,11 +11,9 @@ namespace FileCabinetApp
     {
         private const string DeveloperName = "Grin Polina";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
-        public static IFileCabinetService? fileCabinetService;
+        private static IFileCabinetService? fileCabinetService;
 
-        public static bool isRunning = true;
-
-       
+        private static bool isRunning = true;
 
         /// <summary>
         /// Main method for the application.
@@ -45,14 +44,15 @@ namespace FileCabinetApp
             }
 
             IRecordValidator validator;
+            var builder = new ValidatorBuilder();
             if (validationRules.Equals("custom", StringComparison.OrdinalIgnoreCase))
             {
-                validator = new CustomValidator();
+                validator = builder.CreateCustom();
                 Console.WriteLine("Using custom validation rules.");
             }
             else
             {
-                validator = new DefaultValidator();
+                validator = builder.CreateDefault();
                 Console.WriteLine("Using default validation rules.");
             }
 
@@ -91,21 +91,53 @@ namespace FileCabinetApp
                 const int ParametersIndex = 1;
                 var parameters = inputs.Length > 1 ? inputs[ParametersIndex] : string.Empty;
 
-                var request = new AppCommandRequest
+                commandHandler.Handle(new AppCommandRequest
                 {
                     Command = command,
-                    Parameters = parameters,
-                };
-
-                commandHandler.Handle(request);
+                    Parameters = parameters
+                });
             }
         }
 
         private static ICommandHandler CreateCommandHandlers()
         {
-            var commandHandler = new CommandHandler(fileCabinetService);
-            return commandHandler;
+            var helpHandler = new HelpCommandHandler();
+            var exitHandler = new ExitCommandHandler(SetIsRunning);
+            var statHandler = new StatCommandHandler(fileCabinetService);
+            var createHandler = new CreateCommandHandler(fileCabinetService);
+            var listHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
+            var editHandler = new EditCommandHandler(fileCabinetService);
+            var findHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
+            var exportHandler = new ExportCommandHandler(fileCabinetService);
+            var importHandler = new ImportCommandHandler(fileCabinetService);
+            var removeHandler = new RemoveCommandHandler(fileCabinetService);
+            var purgeHandler = new PurgeCommandHandler(fileCabinetService);
+
+            helpHandler.SetNext(exitHandler)
+                       .SetNext(statHandler)
+                       .SetNext(createHandler)
+                       .SetNext(findHandler)
+                       .SetNext(editHandler)
+                       .SetNext(listHandler)
+                       .SetNext(exportHandler)
+                       .SetNext(importHandler)
+                       .SetNext(removeHandler)
+                       .SetNext(purgeHandler);
+
+            return helpHandler;
         }
 
+        private static void SetIsRunning(bool running)
+        {
+            isRunning = running;
+        }
+
+        public static void DefaultRecordPrint(IEnumerable<FileCabinetRecord> records)
+        {
+            foreach (var record in records)
+            {
+                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
+            }
+        }
     }
 }

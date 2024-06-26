@@ -15,7 +15,8 @@ namespace FileCabinetApp.CommandHandlers
         /// Sets the next handler in the chain.
         /// </summary>
         /// <param name="handler">The next handler.</param>
-        void SetNext(ICommandHandler handler);
+        /// <returns>The current handler for chaining.</returns>
+        ICommandHandler SetNext(ICommandHandler handler);
 
         /// <summary>
         /// Handles the specified command request.
