@@ -12,7 +12,7 @@ namespace FileCabinetApp
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
         private static IFileCabinetService? fileCabinetService;
 
-        public static bool isRunning = true;
+        private static bool isRunning = true;
 
         /// <summary>
         /// Main method for the application.
@@ -100,7 +100,7 @@ namespace FileCabinetApp
         private static ICommandHandler CreateCommandHandlers()
         {
             var helpHandler = new HelpCommandHandler();
-            var exitHandler = new ExitCommandHandler();
+            var exitHandler = new ExitCommandHandler(SetIsRunning);
             var statHandler = new StatCommandHandler(fileCabinetService);
             var createHandler = new CreateCommandHandler(fileCabinetService);
             var listHandler = new ListCommandHandler(fileCabinetService);
@@ -123,6 +123,11 @@ namespace FileCabinetApp
                        .SetNext(purgeHandler);
 
             return helpHandler;
+        }
+
+        private static void SetIsRunning(bool running)
+        {
+            isRunning = running;
         }
     }
 }
