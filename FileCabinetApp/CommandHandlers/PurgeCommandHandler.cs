@@ -9,18 +9,17 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Command handler for the "purge" command.
     /// </summary>
-    public class PurgeCommandHandler : CommandHandlerBase
+    public class PurgeCommandHandler : ServiceCommandHandlerBase
     {
         private const string PurgeCommandText = "purge";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PurgeCommandHandler"/> class.
         /// </summary>
-        /// <param name="service">The file cabinet service to use for purging records.</param>
+        /// <param name="service">The service to manage file cabinet records.</param>
         public PurgeCommandHandler(IFileCabinetService service)
+           : base(service)
         {
-            this.service = service;
         }
 
         /// <summary>

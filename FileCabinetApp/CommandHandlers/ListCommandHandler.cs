@@ -9,19 +9,19 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Command handler for the "list" command.
     /// </summary>
-    public class ListCommandHandler : CommandHandlerBase
+    public class ListCommandHandler : ServiceCommandHandlerBase
     {
         private const string ListCommandText = "list";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
         /// </summary>
-        /// <param name="service">The file cabinet service to use for listing records.</param>
+        /// <param name="service">The service to manage file cabinet records.</param>
         public ListCommandHandler(IFileCabinetService service)
+           : base(service)
         {
-            this.service = service;
         }
+
         /// <summary>
         /// Handles the "list" command request.
         /// </summary>

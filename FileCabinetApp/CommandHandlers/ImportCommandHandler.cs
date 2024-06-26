@@ -9,19 +9,19 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Command handler for the "import" command.
     /// </summary>
-    public class ImportCommandHandler : CommandHandlerBase
+    public class ImportCommandHandler : ServiceCommandHandlerBase
     {
         private const string ImportCommandText = "import";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImportCommandHandler"/> class.
         /// </summary>
-        /// <param name="service">The file cabinet service to use for importing records.</param>
+        /// <param name="service">The service to manage file cabinet records.</param>
         public ImportCommandHandler(IFileCabinetService service)
+           : base(service)
         {
-            this.service = service;
         }
+
         /// <summary>
         /// Handles the "import" command request.
         /// </summary>

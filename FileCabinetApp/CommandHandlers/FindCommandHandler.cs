@@ -9,18 +9,17 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Command handler for the "find" command.
     /// </summary>
-    public class FindCommandHandler : CommandHandlerBase
+    public class FindCommandHandler : ServiceCommandHandlerBase
     {
         private const string FindCommandText = "find";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
-        /// <param name="service">The file cabinet service to use for finding records.</param>
+        /// <param name="service">The service to manage file cabinet records.</param>
         public FindCommandHandler(IFileCabinetService service)
+           : base(service)
         {
-            this.service = service;
         }
 
         /// <summary>

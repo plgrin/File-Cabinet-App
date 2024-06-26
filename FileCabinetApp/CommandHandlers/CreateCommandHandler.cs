@@ -9,18 +9,17 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Command handler for the "create" command.
     /// </summary>
-    public class CreateCommandHandler : CommandHandlerBase
+    public class CreateCommandHandler : ServiceCommandHandlerBase
     {
         private const string CreateCommandText = "create";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
         /// </summary>
-        /// <param name="service">The file cabinet service to use for creating records.</param>
+        /// <param name="service">The service to manage file cabinet records.</param>
         public CreateCommandHandler(IFileCabinetService service)
+            : base(service)
         {
-            this.service = service;
         }
 
         /// <summary>

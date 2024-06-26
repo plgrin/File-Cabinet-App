@@ -9,18 +9,17 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Command handler for the "edit" command.
     /// </summary>
-    public class EditCommandHandler : CommandHandlerBase
+    public class EditCommandHandler : ServiceCommandHandlerBase
     {
         private const string EditCommandText = "edit";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EditCommandHandler"/> class.
         /// </summary>
-        /// <param name="service">The file cabinet service to use for editing records.</param>
+        /// <param name="service">The service to manage file cabinet records.</param>
         public EditCommandHandler(IFileCabinetService service)
+           : base(service)
         {
-            this.service = service;
         }
 
         /// <summary>

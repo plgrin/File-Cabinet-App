@@ -9,18 +9,17 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Command handler for the "remove" command.
     /// </summary>
-    public class RemoveCommandHandler : CommandHandlerBase
+    public class RemoveCommandHandler : ServiceCommandHandlerBase
     {
         private const string RemoveCommandText = "remove";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoveCommandHandler"/> class.
         /// </summary>
-        /// <param name="service">The file cabinet service to use for removing records.</param>
+        /// <param name="service">The service to manage file cabinet records.</param>
         public RemoveCommandHandler(IFileCabinetService service)
+           : base(service)
         {
-            this.service = service;
         }
 
         /// <summary>
