@@ -1,5 +1,4 @@
-﻿using FileCabinetApp.Validators;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -46,22 +45,22 @@ namespace FileCabinetApp.CommandHandlers
                 try
                 {
                     Console.Write("First name: ");
-                    var firstName = this.ReadInput(Converters.StringConverter, new DefaultFirstNameValidator().Validate);
+                    var firstName = this.ReadInput(Converters.StringConverter, Validator.FirstNameValidator);
 
                     Console.Write("Last name: ");
-                    var lastName = this.ReadInput(Converters.StringConverter, new DefaultLastNameValidator().Validate);
+                    var lastName = this.ReadInput(Converters.StringConverter, Validator.LastNameValidator);
 
                     Console.Write("Date of birth (mm/dd/yyyy): ");
-                    var dateOfBirth = this.ReadInput(Converters.DateConverter, new DefaultDateOfBirthValidator().Validate);
+                    var dateOfBirth = this.ReadInput(Converters.DateConverter, Validator.DateOfBirthValidator);
 
                     Console.Write("Age: ");
-                    var age = this.ReadInput(Converters.ShortConverter, new DefaultAgeValidator().Validate);
+                    var age = this.ReadInput(Converters.ShortConverter, Validator.AgeValidator);
 
                     Console.Write("Salary: ");
-                    var salary = this.ReadInput(Converters.DecimalConverter, new DefaultSalaryValidator().Validate);
+                    var salary = this.ReadInput(Converters.DecimalConverter, Validator.SalaryValidator);
 
                     Console.Write("Gender (M/F): ");
-                    var gender = this.ReadInput(Converters.CharConverter, new DefaultGenderValidator().Validate);
+                    var gender = this.ReadInput(Converters.CharConverter, Validator.GenderValidator);
 
                     this.service.EditRecord(id, firstName, lastName, dateOfBirth, age, salary, gender);
                     Console.WriteLine($"Record #{id} is updated.");

@@ -614,5 +614,47 @@
             </summary>
             <param name="args">Command-line arguments.</param>
         </member>
+        <member name="T:FileCabinetApp.Validators.CompositeValidator">
+            <summary>
+            Composite validator class that combines multiple validators.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Validators.CompositeValidator.#ctor(System.Collections.Generic.IEnumerable{FileCabinetApp.IRecordValidator})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.CompositeValidator"/> class.
+            </summary>
+            <param name="validators">The list of validators to combine.</param>
+        </member>
+        <member name="M:FileCabinetApp.Validators.CompositeValidator.ValidateParameters(System.String,System.String,System.DateTime,System.Int16,System.Decimal,System.Char)">
+            <summary>
+            Validates the parameters using the combined validators.
+            </summary>
+            <param name="firstName">The first name to validate.</param>
+            <param name="lastName">The last name to validate.</param>
+            <param name="dateOfBirth">The date of birth to validate.</param>
+            <param name="age">The age to validate.</param>
+            <param name="salary">The salary to validate.</param>
+            <param name="gender">The gender to validate.</param>
+        </member>
+        <member name="T:FileCabinetApp.Validators.CustomValidator">
+            <summary>
+            Custom validator class that uses specific validation rules.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Validators.CustomValidator.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.CustomValidator"/> class.
+            </summary>
+        </member>
+        <member name="T:FileCabinetApp.Validators.DefaultValidator">
+            <summary>
+            Default validator class that uses default validation rules.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Validators.DefaultValidator.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.DefaultValidator"/> class.
+            </summary>
+        </member>
     </members>
 </doc>

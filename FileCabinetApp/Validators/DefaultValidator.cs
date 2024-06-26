@@ -6,23 +6,25 @@ using System.Threading.Tasks;
 
 namespace FileCabinetApp.Validators
 {
-    public class DefaultValidator : IRecordValidator
+    /// <summary>
+    /// Default validator class that uses default validation rules.
+    /// </summary>
+    public class DefaultValidator : CompositeValidator
     {
-        private readonly DefaultFirstNameValidator firstNameValidator = new DefaultFirstNameValidator();
-        private readonly DefaultLastNameValidator lastNameValidator = new DefaultLastNameValidator();
-        private readonly DefaultDateOfBirthValidator dateOfBirthValidator = new DefaultDateOfBirthValidator();
-        private readonly DefaultAgeValidator ageValidator = new DefaultAgeValidator();
-        private readonly DefaultSalaryValidator salaryValidator = new DefaultSalaryValidator();
-        private readonly DefaultGenderValidator genderValidator = new DefaultGenderValidator();
-
-        public void ValidateParameters(string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultValidator"/> class.
+        /// </summary>
+        public DefaultValidator()
+            : base(new List<IRecordValidator>
+            {
+                new FirstNameValidator(2, 60),
+                new LastNameValidator(2, 60),
+                new DateOfBirthValidator(new DateTime(1950, 1, 1), DateTime.Now),
+                new AgeValidator(0, 120),
+                new SalaryValidator(0, 1000000),
+                new GenderValidator(new char[] { 'M', 'F' })
+            })
         {
-            firstNameValidator.Validate(firstName);
-            lastNameValidator.Validate(lastName);
-            dateOfBirthValidator.Validate(dateOfBirth);
-            ageValidator.Validate(age);
-            salaryValidator.Validate(salary);
-            genderValidator.Validate(gender);
         }
     }
 }

@@ -6,23 +6,25 @@ using System.Threading.Tasks;
 
 namespace FileCabinetApp.Validators
 {
-    public class CustomValidator : IRecordValidator
+    /// <summary>
+    /// Custom validator class that uses specific validation rules.
+    /// </summary>
+    public class CustomValidator : CompositeValidator
     {
-        private readonly CustomFirstNameValidator firstNameValidator = new CustomFirstNameValidator();
-        private readonly CustomLastNameValidator lastNameValidator = new CustomLastNameValidator();
-        private readonly CustomDateOfBirthValidator dateOfBirthValidator = new CustomDateOfBirthValidator();
-        private readonly CustomAgeValidator ageValidator = new CustomAgeValidator();
-        private readonly CustomSalaryValidator salaryValidator = new CustomSalaryValidator();
-        private readonly CustomGenderValidator genderValidator = new CustomGenderValidator();
-
-        public void ValidateParameters(string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomValidator"/> class.
+        /// </summary>
+        public CustomValidator()
+            : base(new List<IRecordValidator>
+            {
+                new FirstNameValidator(3, 50),
+                new LastNameValidator(3, 50),
+                new DateOfBirthValidator(new DateTime(1960, 1, 1), DateTime.Now.AddYears(-18)),
+                new AgeValidator(18, 100),
+                new SalaryValidator(1000, 1000000),
+                new GenderValidator(new[] { 'M', 'F', 'N', 'B' })
+            })
         {
-            firstNameValidator.Validate(firstName);
-            lastNameValidator.Validate(lastName);
-            dateOfBirthValidator.Validate(dateOfBirth);
-            ageValidator.Validate(age);
-            salaryValidator.Validate(salary);
-            genderValidator.Validate(gender);
         }
     }
 }

@@ -2,7 +2,6 @@
 using FileCabinetApp.CommandHandlers;
 using FileCabinetApp.Validators;
 
-
 namespace FileCabinetApp
 {
     /// <summary>
