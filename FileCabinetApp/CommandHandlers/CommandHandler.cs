@@ -127,22 +127,22 @@ namespace FileCabinetApp.CommandHandlers
         private void Create(string parameters)
         {
             Console.Write("First name: ");
-            var firstName = ReadInput(Converters.StringConverter, Validators.FirstNameValidator);
+            var firstName = this.ReadInput(Converters.StringConverter, Validators.FirstNameValidator);
 
             Console.Write("Last name: ");
-            var lastName = ReadInput(Converters.StringConverter, Validators.LastNameValidator);
+            var lastName = this.ReadInput(Converters.StringConverter, Validators.LastNameValidator);
 
             Console.Write("Date of birth (mm/dd/yyyy): ");
-            var dateOfBirth = ReadInput(Converters.DateConverter, Validators.DateOfBirthValidator);
+            var dateOfBirth = this.ReadInput(Converters.DateConverter, Validators.DateOfBirthValidator);
 
             Console.Write("Age: ");
-            var age = ReadInput(Converters.ShortConverter, Validators.AgeValidator);
+            var age = this.ReadInput(Converters.ShortConverter, Validators.AgeValidator);
 
             Console.Write("Salary: ");
-            var salary = ReadInput(Converters.DecimalConverter, Validators.SalaryValidator);
+            var salary = this.ReadInput(Converters.DecimalConverter, Validators.SalaryValidator);
 
             Console.Write("Gender (M/F): ");
-            var gender = ReadInput(Converters.CharConverter, Validators.GenderValidator);
+            var gender = this.ReadInput(Converters.CharConverter, Validators.GenderValidator);
 
             int recordId = Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, salary, gender);
             Console.WriteLine($"Record #{recordId} is created.");
@@ -193,22 +193,22 @@ namespace FileCabinetApp.CommandHandlers
                 try
                 {
                     Console.Write("First name: ");
-                    var firstName = ReadInput(Converters.StringConverter, Validators.FirstNameValidator);
+                    var firstName = this.ReadInput(Converters.StringConverter, Validators.FirstNameValidator);
 
                     Console.Write("Last name: ");
-                    var lastName = ReadInput(Converters.StringConverter, Validators.LastNameValidator);
+                    var lastName = this.ReadInput(Converters.StringConverter, Validators.LastNameValidator);
 
                     Console.Write("Date of birth (mm/dd/yyyy): ");
-                    var dateOfBirth = ReadInput(Converters.DateConverter, Validators.DateOfBirthValidator);
+                    var dateOfBirth = this.ReadInput(Converters.DateConverter, Validators.DateOfBirthValidator);
 
                     Console.Write("Age: ");
-                    var age = ReadInput(Converters.ShortConverter, Validators.AgeValidator);
+                    var age = this.ReadInput(Converters.ShortConverter, Validators.AgeValidator);
 
                     Console.Write("Salary: ");
-                    var salary = ReadInput(Converters.DecimalConverter, Validators.SalaryValidator);
+                    var salary = this.ReadInput(Converters.DecimalConverter, Validators.SalaryValidator);
 
                     Console.Write("Gender (M/F): ");
-                    var gender = ReadInput(Converters.CharConverter, Validators.GenderValidator);
+                    var gender = this.ReadInput(Converters.CharConverter, Validators.GenderValidator);
 
                     Program.fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, age, salary, gender);
                     Console.WriteLine($"Record #{id} is updated.");
@@ -280,11 +280,11 @@ namespace FileCabinetApp.CommandHandlers
 
             if (format.Equals("csv", StringComparison.InvariantCultureIgnoreCase))
             {
-                ExportCsv(path);
+                this.ExportCsv(path);
             }
             else if (format.Equals("xml", StringComparison.InvariantCultureIgnoreCase))
             {
-                ExportXml(path);
+                this.ExportXml(path);
             }
             else
             {
@@ -356,11 +356,11 @@ namespace FileCabinetApp.CommandHandlers
 
             if (format.Equals("csv", StringComparison.InvariantCultureIgnoreCase))
             {
-                ImportCsv(path);
+                this.ImportCsv(path);
             }
             else if (format.Equals("xml", StringComparison.InvariantCultureIgnoreCase))
             {
-                ImportXml(path);
+                this.ImportXml(path);
             }
             else
             {
@@ -431,6 +431,7 @@ namespace FileCabinetApp.CommandHandlers
                             record.Salary,
                             record.Gender
                         );
+
                         importedCount++;
                     }
                     catch (Exception ex)
