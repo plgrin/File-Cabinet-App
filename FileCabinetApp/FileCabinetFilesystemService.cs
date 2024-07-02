@@ -110,6 +110,7 @@ namespace FileCabinetApp
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
                     long position = this.fileStream.Position;
+                    short status = reader.ReadInt16();
                     int recordId = reader.ReadInt32();
 
                     if (recordId == id)
@@ -145,6 +146,7 @@ namespace FileCabinetApp
 
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
+                    var status = reader.ReadInt16();
                     var currentId = reader.ReadInt32();
 
                     if (currentId == id)
@@ -184,6 +186,7 @@ namespace FileCabinetApp
             {
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
+                    var status = reader.ReadInt16();
                     var id = reader.ReadInt32();
                     var firstName = new string(reader.ReadChars(60)).Trim();
                     var lastName = new string(reader.ReadChars(60)).Trim();
@@ -258,6 +261,7 @@ namespace FileCabinetApp
             {
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
+                    var status = reader.ReadInt16();
                     var id = reader.ReadInt32();
                     var recordFirstName = new string(reader.ReadChars(60)).Trim();
                     var lastName = new string(reader.ReadChars(60)).Trim();
@@ -308,6 +312,7 @@ namespace FileCabinetApp
             {
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
+                    var status = reader.ReadInt16();
                     var id = reader.ReadInt32();
                     var firstName = new string(reader.ReadChars(60)).Trim();
                     var recordLastName = new string(reader.ReadChars(60)).Trim();
@@ -363,6 +368,7 @@ namespace FileCabinetApp
             {
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
+                    var status = reader.ReadInt16();
                     var id = reader.ReadInt32();
                     var firstName = new string(reader.ReadChars(60)).Trim();
                     var lastName = new string(reader.ReadChars(60)).Trim();
