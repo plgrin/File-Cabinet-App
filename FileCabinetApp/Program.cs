@@ -140,23 +140,26 @@ namespace FileCabinetApp
             var statHandler = new StatCommandHandler(fileCabinetService);
             var createHandler = new CreateCommandHandler(fileCabinetService);
             var listHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
-            var editHandler = new EditCommandHandler(fileCabinetService);
             var findHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
             var exportHandler = new ExportCommandHandler(fileCabinetService);
             var importHandler = new ImportCommandHandler(fileCabinetService);
-            var removeHandler = new RemoveCommandHandler(fileCabinetService);
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
+            var insertHandler = new InsertCommandHandler(fileCabinetService);
+            var deleteHandler = new DeleteCommandHandler(fileCabinetService);
+            var updateHandler = new UpdateCommandHandler(fileCabinetService);
 
             helpHandler.SetNext(exitHandler)
                        .SetNext(statHandler)
                        .SetNext(createHandler)
-                       .SetNext(findHandler)
-                       .SetNext(editHandler)
+                       .SetNext(insertHandler)
                        .SetNext(listHandler)
+                       .SetNext(findHandler)
                        .SetNext(exportHandler)
                        .SetNext(importHandler)
-                       .SetNext(removeHandler)
-                       .SetNext(purgeHandler);
+                       .SetNext(purgeHandler)
+                       .SetNext(insertHandler)
+                       .SetNext(deleteHandler)
+                       .SetNext(updateHandler);
 
             return helpHandler;
         }

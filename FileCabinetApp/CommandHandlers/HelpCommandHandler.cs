@@ -20,12 +20,13 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "stat", "prints the record statistics", "The 'stat' command prints the record statistics." },
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "lists all records", "The 'list' command lists all records." },
-            new string[] { "edit", "edits an existing record", "The 'edit' command edits an existing record." },
             new string[] { "find", "finds records by a property", "The 'find' command finds records by a property." },
             new string[] { "export", "exports records to a file", "The 'export' command exports records to a file. Usage: export <format> <filename>." },
             new string[] { "import", "imports records from a file", "The 'import' command imports records from a file. Usage: import <format> <filename>." },
-            new string[] { "remove", "removes a record by ID", "The 'remove' command removes a record by ID. Usage: remove <id>." },
             new string[] { "purge", "defragments the data file", "The 'purge' command defragments the data file by removing deleted records." },
+            new string[] { "insert", "inserts a new record", "The 'insert' command inserts a new record. Usage: insert (field1, field2, ...) values ('value1', 'value2', ...)." },
+            new string[] { "delete", "deletes records by specified criteria", "The 'delete' command deletes records by specified criteria. Usage: delete where <field> = '<value>'." },
+            new string[] { "update", "updates records by specified criteria", "The 'update' command updates records by specified criteria. Usage: update set <field1> = '<value1>', <field2> = '<value2>' where <field3> = '<value3>'." },
         };
 
         /// <summary>
