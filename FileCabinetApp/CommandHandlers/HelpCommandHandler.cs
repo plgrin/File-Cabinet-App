@@ -27,6 +27,7 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "remove", "removes a record by ID", "The 'remove' command removes a record by ID. Usage: remove <id>." },
             new string[] { "purge", "defragments the data file", "The 'purge' command defragments the data file by removing deleted records." },
             new string[] { "insert", "inserts a new record", "The 'insert' command inserts a new record. Usage: insert (field1, field2, ...) values ('value1', 'value2', ...)." },
+            new string[] { "delete", "deletes records by specified criteria", "The 'delete' command deletes records by specified criteria. Usage: delete where <field> = '<value>'." },
         };
 
         /// <summary>
