@@ -19,6 +19,9 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
 
+        private readonly Dictionary<string, ReadOnlyCollection<FileCabinetRecord>> searchCache = new Dictionary<string, ReadOnlyCollection<FileCabinetRecord>>();
+
+
         public FileCabinetMemoryService(IRecordValidator validator)
         {
             this.validator = validator;
@@ -56,19 +59,6 @@ namespace FileCabinetApp
             return record.Id;
         }
 
-        public void CreateRecord(FileCabinetRecord record)
-        {
-            this.validator.ValidateParameters(record.FirstName, record.LastName, record.DateOfBirth, record.Age, record.Salary, record.Gender);
-
-            var existingRecord = this.list.FirstOrDefault(r => r.Id == record.Id);
-            if (existingRecord != null)
-            {
-                this.list.Remove(existingRecord);
-            }
-
-            this.list.Add(record);
-            this.AddRecordToDictionaries(record);
-        }
         /// <summary>
         /// Edits an existing record.
         /// </summary>
@@ -110,12 +100,16 @@ namespace FileCabinetApp
         /// <returns>An array of records with the specified first name.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            if (this.firstNameDictionary.ContainsKey(firstName))
+            string key = $"firstName:{firstName.ToLower()}";
+            if (this.searchCache.ContainsKey(key))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(this.firstNameDictionary[firstName]);
+                return this.searchCache[key];
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+            var result = this.list.FindAll(r => r.FirstName.Equals(firstName, StringComparison.InvariantCultureIgnoreCase));
+            var readOnlyResult = new ReadOnlyCollection<FileCabinetRecord>(result);
+            this.searchCache[key] = readOnlyResult;
+            return readOnlyResult;
         }
 
         /// <summary>
@@ -125,12 +119,16 @@ namespace FileCabinetApp
         /// <returns>An array of records with the specified last name.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
-            if (this.lastNameDictionary.ContainsKey(lastName))
+            string key = $"lastName:{lastName.ToLower()}";
+            if (this.searchCache.ContainsKey(key))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(this.lastNameDictionary[lastName]);
+                return this.searchCache[key];
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+            var result = this.list.FindAll(r => r.LastName.Equals(lastName, StringComparison.InvariantCultureIgnoreCase));
+            var readOnlyResult = new ReadOnlyCollection<FileCabinetRecord>(result);
+            this.searchCache[key] = readOnlyResult;
+            return readOnlyResult;
         }
 
         /// <summary>
@@ -140,13 +138,16 @@ namespace FileCabinetApp
         /// <returns>An array of records with the specified date of birth.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
-            DateTime dob = DateTime.Parse(dateOfBirth);
-            if (this.dateOfBirthDictionary.ContainsKey(dob))
+            string key = $"dateOfBirth:{dateOfBirth.ToLower()}";
+            if (this.searchCache.ContainsKey(key))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(this.dateOfBirthDictionary[dob]);
+                return this.searchCache[key];
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+            var result = this.list.FindAll(r => r.DateOfBirth.ToString("yyyy-MM-dd").Equals(dateOfBirth, StringComparison.InvariantCultureIgnoreCase));
+            var readOnlyResult = new ReadOnlyCollection<FileCabinetRecord>(result);
+            this.searchCache[key] = readOnlyResult;
+            return readOnlyResult;
         }
 
         /// <summary>
@@ -171,8 +172,6 @@ namespace FileCabinetApp
         {
             return new FileCabinetServiceSnapshot(new List<FileCabinetRecord>(this.list));
         }
-
-        //protected abstract void ValidateParameters(string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender);
 
         public int Purge()
         {
@@ -239,6 +238,11 @@ namespace FileCabinetApp
             }
 
             this.dateOfBirthDictionary[record.DateOfBirth].Add(record);
+        }
+
+        private void ClearCache()
+        {
+            this.searchCache.Clear();
         }
     }
 }
