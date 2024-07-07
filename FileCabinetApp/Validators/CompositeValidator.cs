@@ -33,7 +33,7 @@ namespace FileCabinetApp.Validators
         /// <param name="gender">The gender to validate.</param>
         public void ValidateParameters(string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender)
         {
-            foreach (var validator in validators)
+            foreach (var validator in this.validators)
             {
                 validator.ValidateParameters(firstName, lastName, dateOfBirth, age, salary, gender);
             }

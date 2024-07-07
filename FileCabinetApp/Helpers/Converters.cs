@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileCabinetApp
+namespace FileCabinetApp.Helpers
 {
     /// <summary>
     /// Provides methods for converting strings to various data types.
@@ -16,7 +16,6 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="input">The input string.</param>
         /// <returns>A tuple containing a boolean indicating success, an error message if applicable, and the converted value.</returns>
-
         public static Tuple<bool, string, string> StringConverter(string input)
         {
             return Tuple.Create(true, string.Empty, input);

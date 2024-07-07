@@ -4,8 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FileCabinetApp.Models;
+using FileCabinetApp.Validators;
 
-namespace FileCabinetApp
+namespace FileCabinetApp.Services
 {
     /// <summary>
     /// Provides file system based storage for File Cabinet records.
@@ -13,8 +15,8 @@ namespace FileCabinetApp
     public class FileCabinetFilesystemService : IFileCabinetService
     {
         private const int RecordSize = 278;
-        private FileStream fileStream;
         private readonly IRecordValidator validator;
+        private FileStream fileStream;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
@@ -52,77 +54,9 @@ namespace FileCabinetApp
 
             this.validator.ValidateParameters(firstName, lastName, dateOfBirth, age, salary, gender);
 
-            using (BinaryWriter writer = new BinaryWriter(this.fileStream, System.Text.Encoding.UTF8, true))
-            {
-                writer.Seek(0, SeekOrigin.End);
-                writer.Write((short)0); // Status
-                writer.Write(record.Id);
-                writer.Write(PadRight(record.FirstName, 60));
-                writer.Write(PadRight(record.LastName, 60));
-                writer.Write(record.DateOfBirth.Year);
-                writer.Write(record.DateOfBirth.Month);
-                writer.Write(record.DateOfBirth.Day);
-                writer.Write(record.Age);
-                writer.Write(record.Salary);
-                writer.Write(record.Gender);
-            }
+            this.SaveRecord(record);
 
             return record.Id;
-        }
-
-        public void CreateRecord(FileCabinetRecord record)
-        {
-            this.validator.ValidateParameters(record.FirstName, record.LastName, record.DateOfBirth, record.Age, record.Salary, record.Gender);
-
-            var existingRecord = this.GetRecords().FirstOrDefault(r => r.Id == record.Id);
-            if (existingRecord != null)
-            {
-                this.RemoveRecordFromFile(existingRecord.Id);
-            }
-
-            this.SaveRecord(record);
-        }
-
-        private void SaveRecord(FileCabinetRecord record)
-        {
-            using (BinaryWriter writer = new BinaryWriter(this.fileStream, System.Text.Encoding.UTF8, true))
-            {
-                writer.Seek(0, SeekOrigin.End);
-                writer.Write((short)0);
-                writer.Write(record.Id);
-                writer.Write(record.FirstName.PadRight(60));
-                writer.Write(record.LastName.PadRight(60));
-                writer.Write(record.DateOfBirth.Year);
-                writer.Write(record.DateOfBirth.Month);
-                writer.Write(record.DateOfBirth.Day);
-                writer.Write(record.Age);
-                writer.Write(record.Salary);
-                writer.Write(record.Gender);
-            }
-        }
-
-        private void RemoveRecordFromFile(int id)
-        {
-            using (BinaryReader reader = new BinaryReader(this.fileStream, System.Text.Encoding.UTF8, true))
-            using (BinaryWriter writer = new BinaryWriter(this.fileStream, System.Text.Encoding.UTF8, true))
-            {
-                this.fileStream.Seek(0, SeekOrigin.Begin);
-                while (this.fileStream.Position < this.fileStream.Length)
-                {
-                    long position = this.fileStream.Position;
-                    short status = reader.ReadInt16();
-                    int recordId = reader.ReadInt32();
-
-                    if (recordId == id)
-                    {
-                        writer.Seek((int)position, SeekOrigin.Begin);
-                        writer.Write((short)1);
-                        break;
-                    }
-
-                    this.fileStream.Seek(272, SeekOrigin.Current);
-                }
-            }
         }
 
         /// <summary>
@@ -146,7 +80,6 @@ namespace FileCabinetApp
 
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
-                    var status = reader.ReadInt16();
                     var currentId = reader.ReadInt32();
 
                     if (currentId == id)
@@ -186,7 +119,6 @@ namespace FileCabinetApp
             {
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
-                    var status = reader.ReadInt16();
                     var id = reader.ReadInt32();
                     var firstName = new string(reader.ReadChars(60)).Trim();
                     var lastName = new string(reader.ReadChars(60)).Trim();
@@ -261,7 +193,6 @@ namespace FileCabinetApp
             {
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
-                    var status = reader.ReadInt16();
                     var id = reader.ReadInt32();
                     var recordFirstName = new string(reader.ReadChars(60)).Trim();
                     var lastName = new string(reader.ReadChars(60)).Trim();
@@ -272,7 +203,7 @@ namespace FileCabinetApp
                     var salary = reader.ReadDecimal();
                     var gender = reader.ReadChar();
 
-                    if (string.Equals(recordFirstName, firstName, StringComparison.InvariantCultureIgnoreCase))
+                    if (string.Equals(recordFirstName, firstName, StringComparison.OrdinalIgnoreCase))
                     {
                         var record = new FileCabinetRecord
                         {
@@ -312,7 +243,6 @@ namespace FileCabinetApp
             {
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
-                    var status = reader.ReadInt16();
                     var id = reader.ReadInt32();
                     var firstName = new string(reader.ReadChars(60)).Trim();
                     var recordLastName = new string(reader.ReadChars(60)).Trim();
@@ -323,7 +253,7 @@ namespace FileCabinetApp
                     var salary = reader.ReadDecimal();
                     var gender = reader.ReadChar();
 
-                    if (string.Equals(recordLastName, lastName, StringComparison.InvariantCultureIgnoreCase))
+                    if (string.Equals(recordLastName, lastName, StringComparison.OrdinalIgnoreCase))
                     {
                         var record = new FileCabinetRecord
                         {
@@ -368,7 +298,6 @@ namespace FileCabinetApp
             {
                 while (this.fileStream.Position < this.fileStream.Length)
                 {
-                    var status = reader.ReadInt16();
                     var id = reader.ReadInt32();
                     var firstName = new string(reader.ReadChars(60)).Trim();
                     var lastName = new string(reader.ReadChars(60)).Trim();
@@ -443,6 +372,7 @@ namespace FileCabinetApp
                     reader.BaseStream.Seek(RecordSize - sizeof(short) - sizeof(int), SeekOrigin.Current);
                 }
             }
+
             throw new ArgumentException($"Record #{id} doesn't exist.");
         }
 
@@ -489,6 +419,24 @@ namespace FileCabinetApp
         private static char[] PadRight(string value, int length)
         {
             return value.PadRight(length).ToCharArray();
+        }
+
+        private void SaveRecord(FileCabinetRecord record)
+        {
+            using (BinaryWriter writer = new BinaryWriter(this.fileStream, Encoding.UTF8, true))
+            {
+                writer.Seek(0, SeekOrigin.End);
+                writer.Write((short)0); // Status
+                writer.Write(record.Id);
+                writer.Write(PadRight(record.FirstName, 60));
+                writer.Write(PadRight(record.LastName, 60));
+                writer.Write(record.DateOfBirth.Year);
+                writer.Write(record.DateOfBirth.Month);
+                writer.Write(record.DateOfBirth.Day);
+                writer.Write(record.Age);
+                writer.Write(record.Salary);
+                writer.Write(record.Gender);
+            }
         }
     }
 }

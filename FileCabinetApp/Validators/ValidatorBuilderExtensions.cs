@@ -3,13 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FileCabinetApp.Validators;
 using Microsoft.Extensions.Configuration;
 
-namespace FileCabinetApp
+namespace FileCabinetApp.Validators
 {
+    /// <summary>
+    /// Provides extension methods for the ValidatorBuilder class to create default and custom validators.
+    /// </summary>
     public static class ValidatorBuilderExtensions
     {
+        /// <summary>
+        /// Creates a default validator using configuration from the specified section.
+        /// </summary>
+        /// <param name="builder">The ValidatorBuilder instance.</param>
+        /// <param name="section">The configuration section containing validation rules.</param>
+        /// <returns>An IRecordValidator instance configured with default validation rules.</returns>
         public static IRecordValidator CreateDefault(this ValidatorBuilder builder, IConfigurationSection section)
         {
             var firstNameConfig = section.GetSection("firstName");
@@ -29,6 +37,12 @@ namespace FileCabinetApp
                 .Create();
         }
 
+        /// <summary>
+        /// Creates a custom validator using configuration from the specified section.
+        /// </summary>
+        /// <param name="builder">The ValidatorBuilder instance.</param>
+        /// <param name="section">The configuration section containing validation rules.</param>
+        /// <returns>An IRecordValidator instance configured with custom validation rules.</returns>
         public static IRecordValidator CreateCustom(this ValidatorBuilder builder, IConfigurationSection section)
         {
             var firstNameConfig = section.GetSection("firstName");

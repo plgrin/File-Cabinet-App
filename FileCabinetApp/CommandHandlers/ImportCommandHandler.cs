@@ -1,8 +1,11 @@
-﻿using System;
+﻿#pragma warning disable CA1031
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FileCabinetApp.Services;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -28,7 +31,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="request">The command request.</param>
         public override void Handle(AppCommandRequest request)
         {
-            if (request.Command.ToLower() == ImportCommandText)
+            if (request.Command.Equals(ImportCommandText, StringComparison.OrdinalIgnoreCase))
             {
                 this.Import(request.Parameters);
             }
@@ -75,7 +78,7 @@ namespace FileCabinetApp.CommandHandlers
             try
             {
                 using var reader = new StreamReader(path);
-                var csvReader = new FileCabinetRecordCsvReader(reader);
+                var csvReader = new Helpers.FileCabinetRecordCsvReader(reader);
                 var records = csvReader.ReadAll();
 
                 int importedCount = 0;
@@ -111,7 +114,7 @@ namespace FileCabinetApp.CommandHandlers
             try
             {
                 using var reader = new StreamReader(path);
-                var xmlReader = new FileCabinetRecordXmlReader();
+                var xmlReader = new Helpers.FileCabinetRecordXmlReader();
                 var records = xmlReader.ReadAll(reader);
 
                 int importedCount = 0;

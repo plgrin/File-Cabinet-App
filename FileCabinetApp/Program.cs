@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Models;
+using FileCabinetApp.Services;
 using FileCabinetApp.Validators;
 using Microsoft.Extensions.Configuration;
 
@@ -51,7 +53,7 @@ namespace FileCabinetApp
                     storageType = arg.Substring(2);
                 }
 
-                if (arg.Equals("--use-stopwatch", StringComparison.InvariantCultureIgnoreCase))
+                if (arg.Equals("--use-stopwatch", StringComparison.OrdinalIgnoreCase))
                 {
                     useStopwatch = true;
                 }
@@ -128,7 +130,7 @@ namespace FileCabinetApp
                 commandHandler.Handle(new AppCommandRequest
                 {
                     Command = command,
-                    Parameters = parameters
+                    Parameters = parameters,
                 });
             }
         }
@@ -140,8 +142,6 @@ namespace FileCabinetApp
             var statHandler = new StatCommandHandler(fileCabinetService);
             var createHandler = new CreateCommandHandler(fileCabinetService);
             var selectHandler = new SelectCommandHandler(fileCabinetService);
-            //var listHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
-            //var findHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
             var exportHandler = new ExportCommandHandler(fileCabinetService);
             var importHandler = new ImportCommandHandler(fileCabinetService);
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
@@ -153,9 +153,6 @@ namespace FileCabinetApp
                        .SetNext(statHandler)
                        .SetNext(createHandler)
                        .SetNext(selectHandler)
-                       //.SetNext(insertHandler)
-                       //.SetNext(listHandler)
-                       //.SetNext(findHandler)
                        .SetNext(exportHandler)
                        .SetNext(importHandler)
                        .SetNext(purgeHandler)
@@ -169,14 +166,6 @@ namespace FileCabinetApp
         private static void SetIsRunning(bool running)
         {
             isRunning = running;
-        }
-
-        public static void DefaultRecordPrint(IEnumerable<FileCabinetRecord> records)
-        {
-            foreach (var record in records)
-            {
-                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth:yyyy-MMM-dd}, {record.Age}, {record.Salary}, {record.Gender}");
-            }
         }
     }
 }

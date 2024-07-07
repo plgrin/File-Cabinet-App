@@ -11,7 +11,6 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class ExitCommandHandler : CommandHandlerBase
     {
-        private const string ExitCommandText = "exit";
         private readonly Action<bool> setIsRunning;
 
         /// <summary>
@@ -29,7 +28,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="request">The command request.</param>
         public override void Handle(AppCommandRequest request)
         {
-            if (request.Command.Equals("exit", StringComparison.InvariantCultureIgnoreCase))
+            if (request.Command.Equals("exit", StringComparison.OrdinalIgnoreCase))
             {
                 this.setIsRunning(false);
                 Console.WriteLine("Exiting an application...");

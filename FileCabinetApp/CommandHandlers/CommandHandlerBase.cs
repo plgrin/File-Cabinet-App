@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable S108
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -56,6 +57,7 @@ namespace FileCabinetApp.CommandHandlers
                     Console.WriteLine($"\t{suggestion}");
                 }
             }
+
             Console.WriteLine();
         }
 
@@ -63,7 +65,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             var availableCommands = new string[]
             {
-                "help", "exit", "stat", "create", "list", "find", "export", "import", "purge", "insert", "delete", "update"
+                "help", "exit", "stat", "create", "list", "find", "export", "import", "purge", "insert", "delete", "update",
             };
 
             var threshold = 3; // Maximum allowed edit distance
@@ -91,8 +93,13 @@ namespace FileCabinetApp.CommandHandlers
             var targetLength = target.Length;
             var distance = new int[sourceLength + 1, targetLength + 1];
 
-            for (var i = 0; i <= sourceLength; distance[i, 0] = i++) { }
-            for (var j = 0; j <= targetLength; distance[0, j] = j++) { }
+            for (var i = 0; i <= sourceLength; distance[i, 0] = i++)
+            {
+            }
+
+            for (var j = 0; j <= targetLength; distance[0, j] = j++)
+            {
+            }
 
             for (var i = 1; i <= sourceLength; i++)
             {

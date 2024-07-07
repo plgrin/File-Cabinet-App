@@ -5,28 +5,44 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using FileCabinetApp.Services;
 
 namespace FileCabinetApp.CommandHandlers
 {
+    /// <summary>
+    /// Handles the insert command.
+    /// </summary>
     public class InsertCommandHandler : ServiceCommandHandlerBase
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InsertCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">The service to perform insert operations on.</param>
         public InsertCommandHandler(IFileCabinetService service)
             : base(service)
         {
         }
 
-        public override void Handle(AppCommandRequest commandRequest)
+        /// <summary>
+        /// Handles the insert command request.
+        /// </summary>
+        /// <param name="request">The command request containing the command and parameters.</param>
+        public override void Handle(AppCommandRequest request)
         {
-            if (commandRequest.Command.Equals("insert", StringComparison.InvariantCultureIgnoreCase))
+            if (request.Command.Equals("insert", StringComparison.OrdinalIgnoreCase))
             {
-                this.Insert(commandRequest.Parameters);
+                this.Insert(request.Parameters);
             }
             else
             {
-                base.Handle(commandRequest);
+                base.Handle(request);
             }
         }
 
+        /// <summary>
+        /// Inserts a new record based on the specified parameters.
+        /// </summary>
+        /// <param name="parameters">The parameters for the insert command.</param>
         private void Insert(string parameters)
         {
             string[] paramParts = parameters.Split("values");
@@ -58,7 +74,7 @@ namespace FileCabinetApp.CommandHandlers
 
             for (int i = 0; i < fields.Length; i++)
             {
-                fields[i] = fields[i].Trim().ToLower();
+                fields[i] = fields[i].Trim().ToLower(CultureInfo.CurrentCulture);
                 values[i] = values[i].Trim().Trim('\'');
 
                 switch (fields[i])
@@ -106,5 +122,4 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
     }
-
 }

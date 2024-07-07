@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FileCabinetApp.Helpers;
+using FileCabinetApp.Services;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -27,7 +30,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="request">The command request.</param>
         public override void Handle(AppCommandRequest request)
         {
-            if (request.Command.Equals("create", StringComparison.InvariantCultureIgnoreCase))
+            if (request.Command.Equals("create", StringComparison.OrdinalIgnoreCase))
             {
                 this.Create(request.Parameters);
             }
@@ -40,22 +43,22 @@ namespace FileCabinetApp.CommandHandlers
         private void Create(string parameters)
         {
             Console.Write("First name: ");
-            var firstName = this.ReadInput(Converters.StringConverter, Validator.FirstNameValidator);
+            var firstName = this.ReadInput(Converters.StringConverter, Validators.Validator.FirstNameValidator);
 
             Console.Write("Last name: ");
-            var lastName = this.ReadInput(Converters.StringConverter, Validator.LastNameValidator);
+            var lastName = this.ReadInput(Converters.StringConverter, Validators.Validator.LastNameValidator);
 
             Console.Write("Date of birth (mm/dd/yyyy): ");
-            var dateOfBirth = this.ReadInput(Converters.DateConverter, Validator.DateOfBirthValidator);
+            var dateOfBirth = this.ReadInput(Converters.DateConverter, Validators.Validator.DateOfBirthValidator);
 
-            Console.Write("Age: "); 
-            var age = this.ReadInput(Converters.ShortConverter, Validator.AgeValidator);
+            Console.Write("Age: ");
+            var age = this.ReadInput(Converters.ShortConverter, Validators.Validator.AgeValidator);
 
             Console.Write("Salary: ");
-            var salary = this.ReadInput(Converters.DecimalConverter, Validator.SalaryValidator);
+            var salary = this.ReadInput(Converters.DecimalConverter, Validators.Validator.SalaryValidator);
 
             Console.Write("Gender (M/F): ");
-            var gender = this.ReadInput(Converters.CharConverter, Validator.GenderValidator);
+            var gender = this.ReadInput(Converters.CharConverter, Validators.Validator.GenderValidator);
 
             int recordId = this.service.CreateRecord(firstName, lastName, dateOfBirth, age, salary, gender);
             Console.WriteLine($"Record #{recordId} is created.");
