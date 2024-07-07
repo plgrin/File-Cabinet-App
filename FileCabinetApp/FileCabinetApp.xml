@@ -77,23 +77,6 @@
             </summary>
             <param name="records">The records to print.</param>
         </member>
-        <member name="T:FileCabinetApp.CommandHandlers.EditCommandHandler">
-            <summary>
-            Command handler for the "edit" command.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.EditCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.EditCommandHandler"/> class.
-            </summary>
-            <param name="service">The service to manage file cabinet records.</param>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.EditCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
-            <summary>
-            Handles the "edit" command request.
-            </summary>
-            <param name="request">The command request.</param>
-        </member>
         <member name="T:FileCabinetApp.CommandHandlers.ExitCommandHandler">
             <summary>
             Command handler for the "exit" command.
@@ -233,23 +216,6 @@
         <member name="M:FileCabinetApp.CommandHandlers.PurgeCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <summary>
             Handles the "purge" command request.
-            </summary>
-            <param name="request">The command request.</param>
-        </member>
-        <member name="T:FileCabinetApp.CommandHandlers.RemoveCommandHandler">
-            <summary>
-            Command handler for the "remove" command.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.RemoveCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.RemoveCommandHandler"/> class.
-            </summary>
-            <param name="service">The service to manage file cabinet records.</param>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.RemoveCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
-            <summary>
-            Handles the "remove" command request.
             </summary>
             <param name="request">The command request.</param>
         </member>
