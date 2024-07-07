@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,32 +32,52 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="request">The command request.</param>
         public override void Handle(AppCommandRequest request)
         {
-            var parameters = request.Parameters.Split(' ', 2);
-
-            if (parameters.Length < 2)
+            if (request.Command.Equals("find", StringComparison.InvariantCultureIgnoreCase))
             {
-                Console.WriteLine("Invalid parameters. Usage: find <property> <value>");
-                return;
-            }
-
-            var property = parameters[0].ToLower();
-            var value = parameters[1];
-
-            IEnumerable<FileCabinetRecord> records = property switch
-            {
-                "firstname" => this.service.FindByFirstName(value),
-                "lastname" => this.service.FindByLastName(value),
-                "dateofbirth" => this.service.FindByDateOfBirth(value),
-                _ => null
-            };
-
-            if (records == null)
-            {
-                Console.WriteLine($"Search by {property} is not supported.");
+                this.Find(request.Parameters);
             }
             else
             {
+                base.Handle(request);
+            }
+        }
+
+        private void Find(string parameters)
+        {
+            var paramParts = parameters.Split(' ', 2);
+            if (paramParts.Length != 2)
+            {
+                Console.WriteLine("Invalid find command format.");
+                return;
+            }
+
+            var fieldName = paramParts[0].Trim().ToLower();
+            var value = paramParts[1].Trim().Trim('\'');
+            ReadOnlyCollection<FileCabinetRecord> records;
+
+            switch (fieldName)
+            {
+                case "firstname":
+                    records = this.service.FindByFirstName(value);
+                    break;
+                case "lastname":
+                    records = this.service.FindByLastName(value);
+                    break;
+                case "dateofbirth":
+                    records = this.service.FindByDateOfBirth(value);
+                    break;
+                default:
+                    Console.WriteLine($"Search by {fieldName} is not supported.");
+                    return;
+            }
+
+            if (records.Any())
+            {
                 this.printer(records);
+            }
+            else
+            {
+                Console.WriteLine("No records found.");
             }
         }
     }

@@ -146,13 +146,15 @@ namespace FileCabinetApp
             var importHandler = new ImportCommandHandler(fileCabinetService);
             var removeHandler = new RemoveCommandHandler(fileCabinetService);
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
+            var insertHandler = new InsertCommandHandler(fileCabinetService);
 
             helpHandler.SetNext(exitHandler)
                        .SetNext(statHandler)
                        .SetNext(createHandler)
+                       .SetNext(insertHandler)
+                       .SetNext(listHandler)
                        .SetNext(findHandler)
                        .SetNext(editHandler)
-                       .SetNext(listHandler)
                        .SetNext(exportHandler)
                        .SetNext(importHandler)
                        .SetNext(removeHandler)
