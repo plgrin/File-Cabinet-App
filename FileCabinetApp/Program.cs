@@ -139,8 +139,9 @@ namespace FileCabinetApp
             var exitHandler = new ExitCommandHandler(SetIsRunning);
             var statHandler = new StatCommandHandler(fileCabinetService);
             var createHandler = new CreateCommandHandler(fileCabinetService);
-            var listHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
-            var findHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
+            var selectHandler = new SelectCommandHandler(fileCabinetService);
+            //var listHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
+            //var findHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
             var exportHandler = new ExportCommandHandler(fileCabinetService);
             var importHandler = new ImportCommandHandler(fileCabinetService);
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
@@ -151,9 +152,10 @@ namespace FileCabinetApp
             helpHandler.SetNext(exitHandler)
                        .SetNext(statHandler)
                        .SetNext(createHandler)
-                       .SetNext(insertHandler)
-                       .SetNext(listHandler)
-                       .SetNext(findHandler)
+                       .SetNext(selectHandler)
+                       //.SetNext(insertHandler)
+                       //.SetNext(listHandler)
+                       //.SetNext(findHandler)
                        .SetNext(exportHandler)
                        .SetNext(importHandler)
                        .SetNext(purgeHandler)
