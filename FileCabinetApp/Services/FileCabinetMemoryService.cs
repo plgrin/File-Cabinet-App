@@ -1,11 +1,13 @@
-﻿using System;
+﻿#pragma warning disable CA1062
+#pragma warning disable CA1854
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using FileCabinetApp.Models;
+using FileCabinetApp.Validators;
 
-namespace FileCabinetApp
+namespace FileCabinetApp.Services
 {
     /// <summary>
     /// Provides methods to manage file cabinet records.
@@ -19,6 +21,12 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
 
+        private readonly Dictionary<string, ReadOnlyCollection<FileCabinetRecord>> searchCache = new Dictionary<string, ReadOnlyCollection<FileCabinetRecord>>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetMemoryService"/> class.
+        /// </summary>
+        /// <param name="validator">The validator to validate record parameters.</param>
         public FileCabinetMemoryService(IRecordValidator validator)
         {
             this.validator = validator;
@@ -51,24 +59,12 @@ namespace FileCabinetApp
             };
 
             this.list.Add(record);
+            this.ClearCache();
 
             this.AddRecordToDictionaries(record);
             return record.Id;
         }
 
-        public void CreateRecord(FileCabinetRecord record)
-        {
-            this.validator.ValidateParameters(record.FirstName, record.LastName, record.DateOfBirth, record.Age, record.Salary, record.Gender);
-
-            var existingRecord = this.list.FirstOrDefault(r => r.Id == record.Id);
-            if (existingRecord != null)
-            {
-                this.list.Remove(existingRecord);
-            }
-
-            this.list.Add(record);
-            this.AddRecordToDictionaries(record);
-        }
         /// <summary>
         /// Edits an existing record.
         /// </summary>
@@ -99,6 +95,7 @@ namespace FileCabinetApp
             record.Age = age;
             record.Salary = salary;
             record.Gender = gender;
+            this.ClearCache();
 
             this.AddRecordToDictionaries(record);
         }
@@ -110,12 +107,16 @@ namespace FileCabinetApp
         /// <returns>An array of records with the specified first name.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            if (this.firstNameDictionary.ContainsKey(firstName))
+            string key = $"firstName:{firstName.ToLower(System.Globalization.CultureInfo.CurrentCulture)}";
+            if (this.searchCache.ContainsKey(key))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(this.firstNameDictionary[firstName]);
+                return this.searchCache[key];
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+            var result = this.list.FindAll(r => r.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase));
+            var readOnlyResult = new ReadOnlyCollection<FileCabinetRecord>(result);
+            this.searchCache[key] = readOnlyResult;
+            return readOnlyResult;
         }
 
         /// <summary>
@@ -125,12 +126,16 @@ namespace FileCabinetApp
         /// <returns>An array of records with the specified last name.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
-            if (this.lastNameDictionary.ContainsKey(lastName))
+            string key = $"lastName:{lastName.ToLower()}";
+            if (this.searchCache.ContainsKey(key))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(this.lastNameDictionary[lastName]);
+                return this.searchCache[key];
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+            var result = this.list.FindAll(r => r.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase));
+            var readOnlyResult = new ReadOnlyCollection<FileCabinetRecord>(result);
+            this.searchCache[key] = readOnlyResult;
+            return readOnlyResult;
         }
 
         /// <summary>
@@ -140,13 +145,16 @@ namespace FileCabinetApp
         /// <returns>An array of records with the specified date of birth.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
-            DateTime dob = DateTime.Parse(dateOfBirth);
-            if (this.dateOfBirthDictionary.ContainsKey(dob))
+            string key = $"dateOfBirth:{dateOfBirth.ToLower()}";
+            if (this.searchCache.ContainsKey(key))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(this.dateOfBirthDictionary[dob]);
+                return this.searchCache[key];
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+            var result = this.list.FindAll(r => r.DateOfBirth.ToString("yyyy-MM-dd").Equals(dateOfBirth, StringComparison.OrdinalIgnoreCase));
+            var readOnlyResult = new ReadOnlyCollection<FileCabinetRecord>(result);
+            this.searchCache[key] = readOnlyResult;
+            return readOnlyResult;
         }
 
         /// <summary>
@@ -167,25 +175,37 @@ namespace FileCabinetApp
             return (this.list.Count, 0); // В памяти записи удаляются полностью.
         }
 
+        /// <summary>
+        /// Creates a snapshot of the current state of the records in memory.
+        /// </summary>
+        /// <returns>A snapshot of the current state of the records.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             return new FileCabinetServiceSnapshot(new List<FileCabinetRecord>(this.list));
         }
 
-        //protected abstract void ValidateParameters(string firstName, string lastName, DateTime dateOfBirth, short age, decimal salary, char gender);
-
+        /// <summary>
+        /// Purges the data by removing deleted records. In memory service, purge is not applicable.
+        /// </summary>
+        /// <returns>The number of purged records, always 0 for memory service.</returns>
         public int Purge()
         {
             // No action needed for memory service
             return 0;
         }
 
+        /// <summary>
+        /// Removes the record with the specified ID.
+        /// </summary>
+        /// <param name="id">The ID of the record to remove.</param>
+        /// <exception cref="ArgumentException">Thrown when the record with the specified ID doesn't exist.</exception>
         public void RemoveRecord(int id)
         {
             var record = this.list.FirstOrDefault(r => r.Id == id);
             if (record != null)
             {
                 this.list.Remove(record);
+                this.ClearCache();
                 this.firstNameDictionary[record.FirstName].Remove(record);
                 this.lastNameDictionary[record.LastName].Remove(record);
                 this.dateOfBirthDictionary[record.DateOfBirth].Remove(record);
@@ -239,6 +259,11 @@ namespace FileCabinetApp
             }
 
             this.dateOfBirthDictionary[record.DateOfBirth].Add(record);
+        }
+
+        private void ClearCache()
+        {
+            this.searchCache.Clear();
         }
     }
 }

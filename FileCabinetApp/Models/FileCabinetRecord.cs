@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileCabinetApp
+namespace FileCabinetApp.Models
 {
     /// <summary>
     /// Represents a record in the File Cabinet.
