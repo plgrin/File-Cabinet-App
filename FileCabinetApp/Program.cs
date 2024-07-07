@@ -157,6 +157,7 @@ namespace FileCabinetApp
                        .SetNext(exportHandler)
                        .SetNext(importHandler)
                        .SetNext(purgeHandler)
+                       .SetNext(insertHandler)
                        .SetNext(deleteHandler)
                        .SetNext(updateHandler);
 
